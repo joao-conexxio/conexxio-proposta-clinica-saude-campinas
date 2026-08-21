@@ -39,15 +39,24 @@ export function Quadro() {
   )
 
   const gruposVisiveis = useMemo(() => {
-    const t = normalizar(termo)
+    /**
+     * Cada palavra digitada precisa aparecer, em qualquer ordem — e não a frase
+     * inteira em sequência. Quem escreve "dentista de criança" está procurando
+     * odontopediatria, e uma comparação de substring contígua devolveria nada.
+     */
+    const termos = normalizar(termo).split(/\s+/).filter(Boolean)
+
     return quadro.grupos
       .filter((g) => aba === 'tudo' || g.id === aba)
       .map((g) => ({
         ...g,
-        itens: t
-          ? g.itens.filter((item) =>
-              normalizar(`${item.nome} ${item.nota ?? ''} ${item.chaves ?? ''} ${g.label}`).includes(t),
-            )
+        itens: termos.length
+          ? g.itens.filter((item) => {
+              const alvo = normalizar(
+                `${item.nome} ${item.nota ?? ''} ${item.chaves ?? ''} ${g.label} ${g.titulo}`,
+              )
+              return termos.every((t) => alvo.includes(t))
+            })
           : g.itens,
       }))
       .filter((g) => g.itens.length > 0)
