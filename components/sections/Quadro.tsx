@@ -65,7 +65,7 @@ export function Quadro() {
   const total = gruposVisiveis.reduce((soma, g) => soma + g.itens.length, 0)
 
   return (
-    <section className="secao secao--nevoa" id="quadro">
+    <section className="secao secao--nevoa" id="quadro" data-cta-zona>
       <div className="wrap">
         <div className="quadro__cabeca">
           <h2 className="h2">{quadro.titulo}</h2>
@@ -136,25 +136,27 @@ export function Quadro() {
 
               <ul className="quadro__lista">
                 {grupo.itens.map((item, i) => (
-                  <li
-                    className="item"
-                    key={item.nome}
-                    style={{ animationDelay: `${Math.min(i, 12) * 24}ms` }}
-                  >
-                    <span className="item__nome">
-                      {item.nome}
-                      {item.nota && <span className="item__nota">{item.nota}</span>}
-                    </span>
+                  <li key={item.nome}>
+                    {/* A linha inteira é o link: no celular o alvo de toque é a
+                        largura da tela, não só a pílula "Agendar". */}
                     <CtaLink
-                      className="item__agendar"
+                      className="item"
+                      style={{ animationDelay: `${Math.min(i, 12) * 24}ms` }}
                       href={whatsapp(
                         `Olá! Vim pelo site e gostaria de agendar: ${item.nome}.`,
                       )}
                       cta={`quadro:${item.nome}`}
+                      ariaLabel={`Agendar ${item.nome} pelo WhatsApp`}
                       external
                     >
-                      {quadro.agendarRotulo}
-                      <IconeSeta className="item__seta" />
+                      <span className="item__nome">
+                        {item.nome}
+                        {item.nota && <span className="item__nota">{item.nota}</span>}
+                      </span>
+                      <span className="item__agendar" aria-hidden>
+                        {quadro.agendarRotulo}
+                        <IconeSeta className="item__seta" />
+                      </span>
                     </CtaLink>
                   </li>
                 ))}

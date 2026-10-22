@@ -24,7 +24,7 @@ export function Hero() {
             <RichText text={hero.lead} />
           </p>
 
-          <div className="hero__acoes">
+          <div className="hero__acoes" data-cta-zona>
             <CtaLink className="btn btn--acao" href={waGeral} cta="hero" external>
               <IconeWhatsapp className="btn__zap" />
               {hero.ctaPrimario}

@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { trackCta } from '@/lib/track'
 
 type CtaLinkProps = {
@@ -8,15 +8,28 @@ type CtaLinkProps = {
   cta: string
   children: ReactNode
   className?: string
+  style?: CSSProperties
+  /** Nome acessível quando o texto visível sozinho não diz para onde o link leva. */
+  ariaLabel?: string
   external?: boolean
 }
 
 /** Link de CTA que dispara o evento de conversão. Substitui os `data-cta`. */
-export function CtaLink({ href, cta, children, className, external }: CtaLinkProps) {
+export function CtaLink({
+  href,
+  cta,
+  children,
+  className,
+  style,
+  ariaLabel,
+  external,
+}: CtaLinkProps) {
   return (
     <a
       className={className}
+      style={style}
       href={href}
+      aria-label={ariaLabel}
       onClick={() => trackCta(cta)}
       {...(external ? { target: '_blank', rel: 'noopener' } : {})}
     >

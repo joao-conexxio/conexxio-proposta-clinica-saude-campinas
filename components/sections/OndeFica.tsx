@@ -42,7 +42,7 @@ export function OndeFica() {
             <h2 className="fechamento__titulo">{ondeFica.cta.titulo}</h2>
             <p className="fechamento__texto">{ondeFica.cta.texto}</p>
 
-            <div className="fechamento__acoes">
+            <div className="fechamento__acoes" data-cta-zona>
               <CtaLink
                 className="btn fechamento__btn"
                 href={waGeral}

@@ -25,7 +25,7 @@ export function ComoFunciona() {
           ))}
         </ol>
 
-        <div className="passos__cta">
+        <div className="passos__cta" data-cta-zona>
           <CtaLink
             className="btn btn--acao"
             href={whatsapp(comoFunciona.ctaMensagem)}

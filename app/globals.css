@@ -62,7 +62,7 @@
   /* Espaço */
   --wrap: 1160px;
   --gutter: clamp(1.15rem, 0.6rem + 2.4vw, 2.5rem);
-  --secao-y: clamp(4.25rem, 3rem + 5.5vw, 7.5rem);
+  --secao-y: clamp(3.5rem, 2.4rem + 5.5vw, 7.5rem);
   --raio: 16px;
   --raio-p: 10px;
   --raio-pill: 999px;
@@ -85,6 +85,11 @@ html {
   scroll-behavior: smooth;
   /* O header fixo não pode cobrir o título da seção ancorada. */
   scroll-padding-top: 5.5rem;
+}
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 1rem;
+  }
 }
 
 body {
@@ -356,7 +361,8 @@ button {
 
 .cabecalho__cta {
   flex: none;
-  padding: 0.68rem 1.2rem;
+  min-height: 44px;
+  padding: 0.6rem 1.2rem;
   font-size: 0.94rem;
 }
 
@@ -376,21 +382,30 @@ button {
   .cabecalho__nav {
     display: none;
   }
-  .cabecalho__marca img {
-    height: 42px;
-  }
 }
-@media (max-width: 420px) {
+/* No celular o header é só o logo: o pedido de agendamento fica com o hero e,
+   depois dele, com a barra fixa. Sem o botão ao lado, o logo ganha tamanho de
+   leitura, como pede o guia. */
+@media (max-width: 640px) {
+  /* Sem botão no header, fixá-lo só tiraria 68px de tela de quem lê. */
+  .cabecalho {
+    position: relative;
+  }
+  .cabecalho__linha {
+    min-height: 4.25rem;
+  }
   .cabecalho__cta {
-    padding: 0.6rem 0.95rem;
-    font-size: 0.88rem;
+    display: none;
+  }
+  .cabecalho__marca img {
+    height: 46px;
   }
 }
 
 /* ── HERO ─────────────────────────────────────────────────────────────── */
 
 .hero {
-  padding-block: clamp(3rem, 1.5rem + 6vw, 6rem) clamp(3.75rem, 2rem + 6vw, 6.5rem);
+  padding-block: clamp(2rem, 0.8rem + 6vw, 6rem) clamp(3rem, 1.5rem + 6vw, 6.5rem);
 }
 
 .hero__grade {
@@ -482,7 +497,7 @@ button {
   border-bottom: 0;
 }
 .ficha__rotulo {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--apoio);
 }
@@ -499,7 +514,7 @@ button {
   border-top: 1px solid var(--linha);
 }
 .ficha__rtTitulo {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--apoio);
   margin-bottom: 0.45rem;
@@ -540,6 +555,21 @@ button {
   }
   .hero__h1 {
     max-width: 100%;
+  }
+}
+@media (max-width: 640px) {
+  .hero__acoes {
+    flex-direction: column;
+    margin-top: 1.8rem;
+  }
+  /* Os responsáveis técnicos voltam na seção da estrutura e no rodapé. No
+     celular, repeti-los aqui só empurra os números para baixo. */
+  .ficha__rt {
+    display: none;
+  }
+  .ficha__topo,
+  .ficha__linhas {
+    padding-inline: 1.15rem;
   }
 }
 
@@ -678,14 +708,35 @@ button {
   color: var(--branco);
 }
 
-/* No celular os quatro filtros cabem numa linha só. */
-@media (max-width: 480px) {
+/* No celular os filtros ficam numa linha só, que rola de lado se faltar
+   espaço, em vez de quebrar e deixar um filtro sozinho embaixo. A faixa vai
+   até a borda da tela para o corte indicar que há mais. */
+@media (max-width: 640px) {
+  .quadro__controles {
+    gap: 0.85rem;
+  }
   .abas {
-    gap: 0.3rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scroll-padding-inline: var(--gutter);
+    width: calc(100% + var(--gutter) * 2);
+  }
+  .abas::-webkit-scrollbar {
+    display: none;
   }
   .aba {
-    padding: 0.55rem 0.8rem;
-    font-size: 0.9rem;
+    flex: none;
+    min-height: 44px;
+  }
+  .busca {
+    max-width: none;
+    flex-basis: 100%;
+  }
+  .busca__campo {
+    min-height: 48px;
   }
 }
 
@@ -794,7 +845,7 @@ button {
 .item__nota {
   display: block;
   margin-top: 0.15rem;
-  font-size: 0.82rem;
+  font-size: 0.875rem;
   font-weight: 400;
   color: var(--apoio);
 }
@@ -821,6 +872,41 @@ button {
 .item__seta {
   width: 13px;
   height: 13px;
+}
+
+/**
+ * No celular a lista vira um bloco único com divisórias, em vez de 29 cartões
+ * soltos: cada linha fica com 56px de alvo de toque e a seção perde quase um
+ * terço da altura.
+ */
+@media (max-width: 640px) {
+  .quadro__lista {
+    grid-template-columns: 1fr;
+    gap: 0;
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: var(--raio-p);
+    overflow: hidden;
+  }
+  .item {
+    min-height: 56px;
+    padding: 0.7rem 0.8rem 0.7rem 1rem;
+    border: 0;
+    border-radius: 0;
+  }
+  .quadro__lista > li + li .item {
+    border-top: 1px solid var(--linha);
+  }
+  .item:hover,
+  .item:active {
+    background: var(--azul-claro);
+  }
+  .item__agendar {
+    padding: 0.4rem 0.75rem;
+  }
+  .quadro__rodape .btn {
+    width: 100%;
+  }
 }
 
 @keyframes item-entra {
@@ -916,6 +1002,31 @@ button {
 @media (max-width: 820px) {
   .passos {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  /* Numeral ao lado do título: a sequência continua legível e cada passo
+     ocupa metade da altura. */
+  .passo {
+    display: grid;
+    grid-template-columns: 2.6rem 1fr;
+    column-gap: 0.9rem;
+    padding-top: 1.1rem;
+  }
+  .passo__n {
+    grid-row: span 2;
+    font-size: 2.2rem;
+  }
+  .passo__titulo {
+    margin-top: 0.15rem;
+  }
+}
+@media (max-width: 640px) {
+  .passos__cta {
+    margin-top: 2rem;
+  }
+  .passos__cta .btn {
+    width: 100%;
   }
 }
 
@@ -973,7 +1084,7 @@ button {
   font-weight: 600;
 }
 .rt__reg {
-  font-size: 0.82rem;
+  font-size: 0.875rem;
   font-weight: 600;
   padding: 0.12rem 0.55rem;
   border: 1px solid var(--linha-clara);
@@ -1112,7 +1223,7 @@ button {
 }
 .endereco__rotulo {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--apoio);
   margin-bottom: 0.3rem;
@@ -1173,6 +1284,10 @@ button {
   background: var(--azul-claro);
 }
 .fechamento__tel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  min-height: 44px;
   font-size: 0.97rem;
 }
 .fechamento__tel strong {
@@ -1188,6 +1303,25 @@ button {
 @media (max-width: 860px) {
   .onde__grade {
     grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 640px) {
+  .endereco__campo,
+  .endereco__mapa,
+  .fechamento__btn {
+    align-self: stretch;
+    width: 100%;
+  }
+  .fechamento {
+    padding: 1.9rem 1.4rem;
+  }
+  .fechamento__acoes {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+  }
+  .fechamento__tel {
+    justify-content: center;
   }
 }
 
@@ -1227,9 +1361,12 @@ button {
 }
 .rodape__links {
   display: grid;
-  gap: 0.55rem;
 }
+/* Alvo de toque de 44px; no desktop o espaçamento visual continua o mesmo. */
 .rodape__links a {
+  display: flex;
+  align-items: center;
+  min-height: 2.25rem;
   font-size: 0.94rem;
   transition: color 0.2s var(--ease);
 }
@@ -1241,8 +1378,8 @@ button {
   gap: 0.6rem;
 }
 .rodape__rede {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: grid;
   place-items: center;
   border-radius: 50%;
@@ -1268,6 +1405,9 @@ button {
   font-size: 0.94rem;
 }
 .rodape__contato a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-weight: 600;
   color: var(--tinta);
 }
@@ -1284,7 +1424,7 @@ button {
   gap: 0.8rem 2rem;
   align-items: baseline;
   justify-content: space-between;
-  font-size: 0.84rem;
+  font-size: 0.875rem;
 }
 .rodape__aviso {
   flex-basis: 100%;
@@ -1301,9 +1441,16 @@ button {
     grid-column: 1 / -1;
   }
 }
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .rodape__grade {
-    grid-template-columns: 1fr;
+    gap: 2rem 1.25rem;
+  }
+  .rodape__links a {
+    min-height: 44px;
+  }
+  /* As duas colunas de links lado a lado; marca e redes ocupam a largura. */
+  .rodape__grade > :last-child {
+    grid-column: 1 / -1;
   }
 }
 
@@ -1330,6 +1477,12 @@ button {
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-top: 1px solid var(--linha);
+    transition: transform 0.3s var(--ease), visibility 0.3s;
+  }
+  /* Com JS a barra começa escondida e o componente decide quando mostrá-la. */
+  .js .barraMobile:not(.is-visivel) {
+    transform: translateY(105%);
+    visibility: hidden;
   }
   .barraMobile .btn {
     width: 100%;
