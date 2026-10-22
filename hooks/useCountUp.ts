@@ -3,8 +3,6 @@
 import { useEffect, useRef } from 'react'
 
 export type CountFormat = {
-  /** 10.83 → "10h50". Bate com as linhas do Raio-X, lidas em hora e minuto. */
-  format?: 'hm'
   prefix?: string
   suffix?: string
   decimals?: number
@@ -12,20 +10,11 @@ export type CountFormat = {
   group?: boolean
 }
 
-/** Formatação idêntica à do `animateCount` original. */
+/** Formata no padrão pt-BR, com o mesmo prefixo do texto estático. */
 export function formatCount(v: number, o: CountFormat): string {
   const prefix = o.prefix ?? ''
   const suffix = o.suffix ?? ''
 
-  if (o.format === 'hm') {
-    let h = Math.floor(v)
-    let m = Math.round((v - h) * 60)
-    if (m === 60) {
-      h += 1
-      m = 0
-    }
-    return `${prefix}${h}h${String(m).padStart(2, '0')}${suffix}`
-  }
   if (o.group) {
     return prefix + Math.round(v).toLocaleString('pt-BR') + suffix
   }

@@ -1,6 +1,6 @@
 /**
  * Ícones inline. Nenhuma requisição de rede, nenhuma biblioteca: a página
- * inteira usa oito formas e todas cabem aqui.
+ * inteira usa sete formas e todas cabem aqui.
  *
  * Todos herdam `currentColor` e recebem a dimensão pela classe, então trocar a
  * cor de um botão troca a do ícone junto.
@@ -101,30 +101,6 @@ export function IconeFacebook({ className }: Props) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden focusable="false">
       <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.52 1.5-3.91 3.77-3.91 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.45 2.9h-2.33V22c4.78-.76 8.44-4.92 8.44-9.94Z" />
-    </svg>
-  )
-}
-
-/**
- * O traço do "S" da marca da clínica, isolado como duas elipses finas
- * sobrepostas. É o único ornamento da página: aparece atrás do hero e do cartão
- * de fechamento, e em lugar nenhum mais.
- */
-export function Arco({ className }: Props) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 600 600"
-      fill="none"
-      stroke="currentColor"
-      aria-hidden
-      focusable="false"
-    >
-      <ellipse cx="300" cy="228" rx="176" ry="98" strokeWidth="1.6" transform="rotate(-19 300 228)" />
-      <ellipse cx="300" cy="372" rx="176" ry="98" strokeWidth="1.6" transform="rotate(-19 300 372)" />
-      {/* Um anel só. Dois deixavam o fundo parecendo círculos aleatórios em vez
-          do traço da marca, e o de fora cortava o bloco de texto ao meio. */}
-      <circle cx="300" cy="300" r="248" strokeWidth="1" opacity="0.5" />
     </svg>
   )
 }

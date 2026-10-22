@@ -1,5 +1,4 @@
 import { CtaLink } from '@/components/ui/CtaLink'
-import { Reveal } from '@/components/ui/Reveal'
 import { IconeWhatsapp } from '@/components/ui/icons'
 import { comoFunciona, whatsapp } from '@/content/lp'
 
@@ -12,18 +11,17 @@ export function ComoFunciona() {
   return (
     <section className="secao" id="como-funciona">
       <div className="wrap">
-        <Reveal>
-          <p className="rotulo">{comoFunciona.eyebrow}</p>
-          <h2 className="h2">{comoFunciona.titulo}</h2>
-        </Reveal>
+        <h2 className="h2">{comoFunciona.titulo}</h2>
 
         <ol className="passos">
           {comoFunciona.passos.map((passo, i) => (
-            <Reveal as="li" className="passo" key={passo.titulo} delay={i * 110}>
-              <span className="passo__n">Passo {i + 1}</span>
+            <li className="passo" key={passo.titulo}>
+              <span className="passo__n" aria-hidden>
+                {i + 1}
+              </span>
               <h3 className="passo__titulo">{passo.titulo}</h3>
               <p className="passo__texto">{passo.texto}</p>
-            </Reveal>
+            </li>
           ))}
         </ol>
 

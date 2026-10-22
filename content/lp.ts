@@ -11,10 +11,38 @@
  * o parágrafo, para a página ser legível em varredura.
  */
 
+/**
+ * Endereço público final. Vem do ambiente no build (ver `.env.example`); sem
+ * ele, aponta para a proposta publicada no GitHub Pages.
+ */
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  'https://joao-conexxio.github.io/conexxio-proposta-clinica-saude-campinas/'
+).replace(/\/?$/, '/')
+
+/**
+ * `true` quando o build é o site oficial no ar. Em modo proposta (o padrão) a
+ * página fica fora do Google e o rodapé avisa que é uma proposta.
+ */
+export const SITE_OFICIAL = process.env.NEXT_PUBLIC_SITE_OFICIAL === 'true'
+
+export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID?.trim() || ''
+
 export const site = {
-  url: 'https://joao-conexxio.github.io/conexxio-proposta-clinica-saude-campinas/',
-  origin: 'https://joao-conexxio.github.io',
+  url: SITE_URL,
+  origin: new URL(SITE_URL).origin,
   nome: 'Clínica Saúde Campinas',
+  /**
+   * Arquivo oficial do logotipo. Para trocar pelo vetor novo: coloque o arquivo
+   * em `public/brand/` e atualize `src`, `largura` e `altura` (as proporções
+   * reais do arquivo). O guia de identidade proíbe recolorir, esticar ou
+   * remontar o logo, então o CSS só define a altura e nunca aplica filtro.
+   */
+  logo: {
+    src: '/brand/logo-clinica.png',
+    largura: 398,
+    altura: 238,
+  },
   title: 'Clínica Saúde Campinas · Consulta, exame e dentista no Centro de Campinas',
   description:
     'Clínica médica e odontológica popular no Centro de Campinas. Mais de 20 especialidades, exames e odontologia no mesmo endereço, com agendamento em até 15 dias. Atendimento particular, sem plano de saúde.',
@@ -50,7 +78,7 @@ export function whatsapp(mensagem: string): string {
 }
 
 export const waGeral = whatsapp(
-  'Olá! Vim pelo site e gostaria de agendar um atendimento na Clínica Saúde Campinas.',
+  `Olá! Vim pelo site e gostaria de agendar um atendimento na ${site.nome}.`,
 )
 
 /** Âncora do botão do header: leva ao quadro, não para fora da página. */
@@ -67,9 +95,7 @@ export const nav = [
 /* ── HERO ─────────────────────────────────────────────────────────────── */
 
 export const hero = {
-  eyebrow: 'Centro de Campinas',
-  // O trecho do meio recebe o traço vinho. Partido para o H1 não depender de innerHTML.
-  h1: ['Consulta, exame e dentista ', 'no mesmo endereço', '.'],
+  h1: 'Consulta, exame e dentista no mesmo endereço.',
   lead:
     'Clínica médica e odontológica popular no Centro de Campinas. Você marca **sem plano de saúde**, é atendido **em até 15 dias** e resolve consulta, exame e tratamento no mesmo lugar, sem correr a cidade inteira.',
   ctaPrimario: 'Agendar no WhatsApp',
@@ -77,7 +103,7 @@ export const hero = {
   ficha: {
     titulo: 'A clínica',
     linhas: [
-      { rotulo: 'Endereço', valor: 'R. Bernardino de Campos, 927 · Centro, Campinas' },
+      { rotulo: 'Endereço', valor: 'R. Bernardino de Campos, 927, Centro, Campinas' },
       { rotulo: 'WhatsApp', valor: '(11) 99300-7610' },
       { rotulo: 'Atendimento', valor: 'Particular, sem plano de saúde' },
       { rotulo: 'Prazo para agendar', valor: 'Até 15 dias' },
@@ -93,7 +119,7 @@ export const hero = {
  * texto do site atual, onde estão soltos no meio de parágrafos corridos.
  */
 export const numeros = {
-  label: 'O que cabe num endereço só',
+  titulo: 'O que cabe num endereço só',
   itens: [
     { count: 20, prefix: '+', display: '+20', legenda: 'médicos especialistas' },
     { count: 150, prefix: '+', display: '+150', legenda: 'procedimentos odontológicos' },
@@ -105,7 +131,6 @@ export const numeros = {
 /* ── SEM PLANO ────────────────────────────────────────────────────────── */
 
 export const semPlano = {
-  eyebrow: 'Para quem paga do próprio bolso',
   titulo: 'Você não precisa de plano de saúde para ser bem atendido.',
   texto:
     'A clínica nasceu para atender quem não tem convênio e não quer esperar meses por um encaminhamento. **O atendimento é particular e com preço popular**, feito por especialistas, com estrutura própria de exames.',
@@ -214,13 +239,12 @@ const GRUPOS: readonly GrupoQuadro[] = [
 ]
 
 export const quadro = {
-  eyebrow: 'Tudo o que a clínica atende',
   titulo: 'Procure o que você precisa e agende direto.',
   lead:
     'Escolha a especialidade, o exame ou o tratamento. O botão abre o WhatsApp **já com o assunto escrito**, então a recepção sabe do que se trata antes de você digitar.',
   todosLabel: 'Tudo',
   buscaLabel: 'Buscar especialidade, exame ou tratamento',
-  buscaPlaceholder: 'ex.: dermatologista, ultrassom, implante',
+  buscaPlaceholder: 'ex.: dermatologista, ultrassom',
   vazio:
     'Nada encontrado com esse termo. Pergunte no WhatsApp: a agenda tem mais opções do que cabe nesta lista.',
   contagem: (n: number) => (n === 1 ? '1 opção' : `${n} opções`),
@@ -237,7 +261,6 @@ export const quadro = {
  * o único lugar da página com numeração.
  */
 export const comoFunciona = {
-  eyebrow: 'Do primeiro contato à consulta',
   titulo: 'Três passos, e nenhum deles é presencial.',
   passos: [
     {
@@ -264,7 +287,6 @@ export const comoFunciona = {
 /* ── A CLÍNICA ────────────────────────────────────────────────────────── */
 
 export const aClinica = {
-  eyebrow: 'A estrutura',
   titulo: 'Uma clínica inteira, não uma sala de consulta.',
   texto:
     'A unidade do Centro reúne consultórios, laboratório de coleta próprio e sala de imagem. É isso que permite **resolver num endereço só** o que normalmente exige três agendamentos em três lugares diferentes.',
@@ -288,7 +310,6 @@ export const aClinica = {
  * O JSON-LD de FAQPage é gerado desta lista, então editar aqui atualiza os dois.
  */
 export const faq = {
-  eyebrow: 'Antes de mandar mensagem',
   titulo: 'O que costumam perguntar.',
   itens: [
     {
@@ -325,7 +346,6 @@ export const faq = {
 /* ── ONDE FICA / CTA FINAL ────────────────────────────────────────────── */
 
 export const ondeFica = {
-  eyebrow: 'Onde fica',
   titulo: 'No Centro de Campinas.',
   // Sem repetir o endereço: ele aparece logo abaixo, como campo de ficha.
   texto: 'A mesma porta serve para consulta, para exame e para o dentista.',
@@ -365,10 +385,12 @@ export const footer = {
   ],
   redesTitulo: 'Redes',
   /**
-   * Marca de autoria da proposta. É a ÚNICA menção permitida à Conexxio na
-   * página: em qualquer outro lugar seria resíduo do template.
+   * Marca de autoria. É a ÚNICA menção à Conexxio na página: em qualquer outro
+   * lugar seria resíduo do template. No modo proposta ela vem acompanhada do
+   * aviso; no site oficial fica só o crédito.
    */
-  assinatura: 'Proposta · Conexxio',
-  assinaturaNota:
-    'Esta é uma proposta de site, não o site oficial da clínica. As informações foram levantadas do site atual em agosto de 2026.',
+  assinatura: SITE_OFICIAL ? 'Site desenvolvido pela Conexxio' : 'Proposta de site pela Conexxio',
+  assinaturaNota: SITE_OFICIAL
+    ? ''
+    : 'Esta é uma proposta de site, não o site oficial da clínica. As informações foram levantadas do site atual em agosto de 2026.',
 } as const

@@ -1,8 +1,6 @@
-import type { ReactNode } from 'react'
 import { CtaLink } from '@/components/ui/CtaLink'
 import { RichText } from '@/components/ui/RichText'
-import { Arco, IconeWhatsapp } from '@/components/ui/icons'
-import { splitWords } from '@/components/ui/SplitWords'
+import { IconeWhatsapp } from '@/components/ui/icons'
 import { QUADRO_HREF, hero, site, waGeral } from '@/content/lp'
 
 /**
@@ -12,31 +10,15 @@ import { QUADRO_HREF, hero, site, waGeral } from '@/content/lp'
  * seguintes (onde, como falar, quanto custa o tipo de atendimento, e o prazo)
  * antes de a pessoa precisar rolar.
  *
- * Os arcos de fundo são o traço do "S" da marca, ampliado.
+ * É o único movimento automático da página: texto e cartão entram uma vez, no
+ * carregamento (CSS, atrás de `.js` e desligado em movimento reduzido).
  */
 export function Hero() {
-  // Cascata contínua entre os três trechos do H1: o índice atravessa o `em`.
-  let i = 0
-  const partes: ReactNode[] = []
-  const [antes, i1] = splitWords(hero.h1[0], i)
-  i = i1
-  const [meio, i2] = splitWords(hero.h1[1], i)
-  i = i2
-  partes.push(<span key="a">{antes}</span>)
-  partes.push(<em key="b">{meio}</em>)
-  partes.push(<span key="c">{hero.h1[2]}</span>)
-
   return (
     <section className="hero">
-      <div className="hero__arcos">
-        <Arco />
-      </div>
-
       <div className="wrap hero__grade">
-        <div>
-          <p className="rotulo">{hero.eyebrow}</p>
-
-          <h1 className="hero__h1">{partes}</h1>
+        <div className="hero__texto">
+          <h1 className="hero__h1">{hero.h1}</h1>
 
           <p className="hero__lead">
             <RichText text={hero.lead} />
@@ -62,7 +44,7 @@ export function Hero() {
           <div className="ficha__topo">
             <span className="ficha__titulo">{hero.ficha.titulo}</span>
             <span className="ficha__cidade">
-              {site.cidade} · {site.uf}
+              {site.cidade}, {site.uf}
             </span>
           </div>
 

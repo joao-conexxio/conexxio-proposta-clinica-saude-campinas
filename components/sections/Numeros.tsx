@@ -1,5 +1,4 @@
 import { Counter } from '@/components/ui/Counter'
-import { Reveal } from '@/components/ui/Reveal'
 import { numeros } from '@/content/lp'
 
 /**
@@ -11,11 +10,13 @@ import { numeros } from '@/content/lp'
  */
 export function Numeros() {
   return (
-    <section className="secao--vinho numeros">
+    <section className="secao--azul numeros" aria-labelledby="numeros-titulo">
       <div className="wrap">
-        <p className="rotulo">{numeros.label}</p>
+        <h2 className="numeros__titulo" id="numeros-titulo">
+          {numeros.titulo}
+        </h2>
 
-        <Reveal className="numeros__grade">
+        <div className="numeros__grade">
           {numeros.itens.map((item) => (
             <div className="numeros__item" key={item.legenda}>
               <Counter
@@ -29,7 +30,7 @@ export function Numeros() {
               <span className="numeros__legenda">{item.legenda}</span>
             </div>
           ))}
-        </Reveal>
+        </div>
       </div>
     </section>
   )

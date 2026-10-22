@@ -1,19 +1,16 @@
 /**
  * Camada única de telemetria da página.
  *
- * Todo evento sai por aqui e é entregue a quem estiver carregado: GA4 (gtag),
- * GTM (dataLayer), Meta (fbq) e Clarity. Nenhum deles é obrigatório: sem as
- * variáveis de ambiente configuradas, estas funções não fazem nada e a página
- * segue igual.
+ * Todo evento sai por aqui e é entregue a quem estiver carregado: GTM
+ * (dataLayer), GA4 (gtag), Meta (fbq) e Clarity. Nenhum deles é obrigatório:
+ * sem NEXT_PUBLIC_GTM_ID configurado, nada é carregado, estas funções não fazem
+ * nada e a página segue igual.
  *
- * O funil desta LP tem três degraus, e é a comparação entre eles que diz onde
- * o anúncio está perdendo gente:
+ * O evento que importa é `cta_click`, com `cta_id` dizendo QUAL botão foi
+ * clicado (hero, header, quadro:Dermatologista, fechamento...). No GTM ele vira
+ * gatilho de "Evento personalizado" para GA4 e Meta.
  *
- *   1. `page_view`        chegou na página
- *   2. `funil_explicacao` rolou até "O que acontece depois"
- *   3. `cta_click`        clicou para abrir o WhatsApp
- *
- * Existe um quarto degrau que NENHUMA analytics de site enxerga: depois do
+ * Existe um segundo degrau que NENHUMA analytics de site enxerga: depois do
  * clique, a pessoa cai no WhatsApp com a mensagem pronta e ainda precisa tocar
  * em enviar. Muita gente não toca. A diferença entre `cta_click` e conversas
  * que realmente chegam só dá para medir comparando este número com o WhatsApp.
@@ -47,15 +44,4 @@ export function trackCta(id: string) {
   const w = window as Win
   // Meta usa um nome de evento próprio para conversão.
   if (typeof w.fbq === 'function') w.fbq('track', 'Lead', { content_name: id })
-}
-
-/** Profundidade de rolagem, uma vez por marco. */
-export function trackScroll(pct: number) {
-  emitir('scroll_depth', { percent: pct })
-}
-
-/** A pessoa chegou a ver uma seção. Usado para medir o degrau do meio. */
-export function trackSecao(id: string) {
-  emitir('secao_vista', { secao: id })
-  if (id === 'o-que-acontece') emitir('funil_explicacao')
 }

@@ -1,37 +1,27 @@
 import type { Metadata, Viewport } from 'next'
-import { DM_Mono, Fraunces, Inter_Tight } from 'next/font/google'
+import { Figtree } from 'next/font/google'
 import { buildJsonLd } from '@/content/schema'
-import { site } from '@/content/lp'
+import { GTM_ID, SITE_OFICIAL, site } from '@/content/lp'
 import './globals.css'
 
 /**
- * Três papéis, três famílias, auto-hospedadas pelo next/font — nada de
- * fonts.googleapis por <link>, que bloqueia a renderização do H1 (o elemento
- * de LCP desta página).
+ * Uma família só, como pede o guia de identidade (sans serif, sem misturar
+ * famílias, hierarquia por peso, tamanho e espaçamento). Figtree tem desenho
+ * limpo e contemporâneo, com abertura generosa que segura bem o português em
+ * corpo pequeno e no celular.
  *
- * Fraunces é uma serifada de terminais macios: a clínica vende acolhimento a
- * quem não tem plano, e uma grotesca de hospital diria o contrário. Inter Tight
- * segura o corpo em português, que tem palavras longas. DM Mono é a voz dos
- * rótulos, e é dela que vem o ar de ficha de atendimento.
+ * Os três pesos do guia: Regular (texto de apoio), Semibold (subtítulos e
+ * rótulos) e Bold (títulos e CTA). Auto-hospedada pelo next/font, sem <link>
+ * para fonts.googleapis, que bloquearia a renderização do H1.
  */
-const display = Fraunces({
+const fonte = Figtree({
   subsets: ['latin'],
-  weight: ['600', '700'],
-  variable: '--font-display',
+  weight: ['400', '600', '700'],
+  variable: '--font-sans',
   display: 'swap',
 })
-const corpo = Inter_Tight({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  variable: '--font-corpo',
-  display: 'swap',
-})
-const mono = DM_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-mono',
-  display: 'swap',
-})
+
+const AZUL = '#1077AE'
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.origin),
@@ -39,11 +29,14 @@ export const metadata: Metadata = {
   description: site.description,
   alternates: { canonical: site.url },
   /**
-   * noindex/nofollow é obrigatório: esta é uma proposta, não o site oficial da
-   * clínica. Duas páginas com o mesmo conteúdo e o mesmo endereço competindo no
-   * Google prejudicariam o cliente. O `robots.txt` em `public/` reforça o mesmo.
+   * Em modo proposta a página fica fora do Google: duas páginas com o mesmo
+   * conteúdo competindo com o site atual da clínica a prejudicariam. No site
+   * oficial (NEXT_PUBLIC_SITE_OFICIAL=true) a indexação é liberada. O
+   * `robots.txt`, gerado em `app/robots.ts`, segue a mesma regra.
    */
-  robots: { index: false, follow: false, nocache: true },
+  robots: SITE_OFICIAL
+    ? { index: true, follow: true }
+    : { index: false, follow: false, nocache: true },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
@@ -53,9 +46,10 @@ export const metadata: Metadata = {
     description: site.ogDescription,
   },
   icons: {
-    // O "S" da marca da clínica, redesenhado como duas elipses. Inline: zero requisições.
-    icon:
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2359131B'/%3E%3Cg fill='none' stroke='%23FBF7F5' stroke-width='2.1' transform='rotate(-19 16 16)'%3E%3Cellipse cx='16' cy='12.4' rx='7.4' ry='4.1'/%3E%3Cellipse cx='16' cy='19.6' rx='7.4' ry='4.1'/%3E%3C/g%3E%3C/svg%3E",
+    // Provisório até o símbolo oficial chegar em vetor: quadrado no Azul Pró
+    // Clínica com uma cruz branca. Não reproduz o logotipo, que o guia proíbe
+    // remontar. Inline: zero requisições.
+    icon: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='${encodeURIComponent(AZUL)}'/%3E%3Cpath d='M13.5 8h5v5.5H24v5h-5.5V24h-5v-5.5H8v-5h5.5z' fill='%23fff'/%3E%3C/svg%3E`,
   },
   other: {
     'geo.region': 'BR-SP',
@@ -64,7 +58,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#59131b',
+  themeColor: AZUL,
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
@@ -75,26 +69,42 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // suppressHydrationWarning: o script abaixo acrescenta `js` ao <html> antes
     // da hidratação, então o className do cliente diverge do que veio do build.
     // É a divergência esperada — sem isto o React registra erro a cada carga.
-    <html
-      lang="pt-BR"
-      className={`${display.variable} ${corpo.variable} ${mono.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="pt-BR" className={fonte.variable} suppressHydrationWarning>
       <head>
-        {/* Marca o documento como "tem JS" antes da primeira pintura. Todo o CSS
-            de reveal está atrás de `.js`, então sem JavaScript a página nasce
-            visível em vez de ficar em branco. */}
+        {/* Marca o documento como "tem JS" antes da primeira pintura. A entrada
+            animada do hero está atrás de `.js`, então sem JavaScript a página
+            nasce visível em vez de ficar em branco. */}
         <script
           dangerouslySetInnerHTML={{
             __html: "document.documentElement.classList.add('js')",
           }}
         />
+        {GTM_ID && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer',${JSON.stringify(GTM_ID)});`,
+            }}
+          />
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd()) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {GTM_ID && (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${encodeURIComponent(GTM_ID)}`}
+              height="0"
+              width="0"
+              style={{ display: 'none', visibility: 'hidden' }}
+              title="Google Tag Manager"
+            />
+          </noscript>
+        )}
+        {children}
+      </body>
     </html>
   )
 }

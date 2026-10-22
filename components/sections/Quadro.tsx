@@ -65,10 +65,9 @@ export function Quadro() {
   const total = gruposVisiveis.reduce((soma, g) => soma + g.itens.length, 0)
 
   return (
-    <section className="secao secao--blush" id="quadro">
+    <section className="secao secao--nevoa" id="quadro">
       <div className="wrap">
         <div className="quadro__cabeca">
-          <p className="rotulo">{quadro.eyebrow}</p>
           <h2 className="h2">{quadro.titulo}</h2>
           <p className="lead">
             <RichText text={quadro.lead} />
@@ -76,14 +75,15 @@ export function Quadro() {
         </div>
 
         <div className="quadro__controles">
-          <div className="abas" role="tablist" aria-label="Tipo de atendimento">
+          {/* Filtros, não abas: todos mostram a mesma lista, só que recortada.
+              `aria-pressed` diz ao leitor de tela qual está ativo. */}
+          <div className="abas" role="group" aria-label="Filtrar por tipo de atendimento">
             {abas.map((item) => (
               <button
                 key={item.id}
                 type="button"
-                role="tab"
                 className="aba"
-                aria-selected={aba === item.id}
+                aria-pressed={aba === item.id}
                 onClick={() => setAba(item.id)}
               >
                 {item.label}

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Reveal } from '@/components/ui/Reveal'
 import { RichText } from '@/components/ui/RichText'
 import { faq } from '@/content/lp'
 
@@ -20,10 +19,7 @@ export function Perguntas() {
   return (
     <section className="secao" id="perguntas">
       <div className="wrap">
-        <Reveal>
-          <p className="rotulo">{faq.eyebrow}</p>
-          <h2 className="h2">{faq.titulo}</h2>
-        </Reveal>
+        <h2 className="h2">{faq.titulo}</h2>
 
         <div className="faq">
           {faq.itens.map((item, i) => {
@@ -33,6 +29,7 @@ export function Perguntas() {
                 <h3>
                   <button
                     type="button"
+                    id={`pergunta-${i}`}
                     className="faq__botao"
                     aria-expanded={abertaAqui}
                     aria-controls={`resposta-${i}`}
@@ -42,7 +39,12 @@ export function Perguntas() {
                     <span className="faq__sinal" aria-hidden />
                   </button>
                 </h3>
-                <div className="faq__resposta" id={`resposta-${i}`} role="region">
+                <div
+                  className="faq__resposta"
+                  id={`resposta-${i}`}
+                  role="region"
+                  aria-labelledby={`pergunta-${i}`}
+                >
                   <div className="faq__respostaInterna">
                     <p className="faq__respostaTexto">
                       <RichText text={item.a} />

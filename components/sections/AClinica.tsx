@@ -1,4 +1,3 @@
-import { Reveal } from '@/components/ui/Reveal'
 import { RichText } from '@/components/ui/RichText'
 import { IconeMarca } from '@/components/ui/icons'
 import { aClinica, site } from '@/content/lp'
@@ -13,19 +12,18 @@ import { aClinica, site } from '@/content/lp'
  */
 export function AClinica() {
   return (
-    <section className="secao secao--vinho" id="a-clinica">
+    <section className="secao secao--azul" id="a-clinica">
       <div className="wrap clinica__grade">
-        <Reveal>
-          <p className="rotulo">{aClinica.eyebrow}</p>
+        <div>
           <h2 className="h2">{aClinica.titulo}</h2>
           <p className="lead">
             <RichText text={aClinica.texto} />
           </p>
-        </Reveal>
+        </div>
 
         {/* A lista e o quadro dos responsáveis dividem a coluna da direita: com
             o quadro embaixo do texto, a direita ficava vazia da metade para o pé. */}
-        <Reveal delay={120}>
+        <div>
           <ul className="clinica__lista">
             {aClinica.itens.map((item) => (
               <li className="clinica__item" key={item}>
@@ -47,7 +45,7 @@ export function AClinica() {
             </div>
             <p className="rt__nota">{aClinica.responsaveisNota}</p>
           </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   )

@@ -11,7 +11,7 @@ import { SemPlano } from '@/components/sections/SemPlano'
 import { BarraMobile } from '@/components/ui/BarraMobile'
 
 /**
- * Proposta de site para a Clínica Saúde Campinas.
+ * Site da Clínica Saúde Campinas (identidade Linha Azul).
  *
  * A ordem persegue a decisão de quem chega sem plano de saúde procurando
  * atendimento, e não a apresentação da clínica:

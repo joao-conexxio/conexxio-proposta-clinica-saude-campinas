@@ -23,10 +23,10 @@ export function Header() {
       <div className="wrap cabecalho__linha">
         <a className="cabecalho__marca" href="#topo" aria-label={`${site.nome}, ir para o topo`}>
           <img
-            src={asset('/brand/logo-clinica.png')}
+            src={asset(site.logo.src)}
             alt={site.nome}
-            width={398}
-            height={238}
+            width={site.logo.largura}
+            height={site.logo.altura}
           />
         </a>
 

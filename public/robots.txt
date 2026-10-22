@@ -1,4 +1,0 @@
-# Proposta de site, não o site oficial da clínica. Não deve ser indexada:
-# duas páginas com o mesmo conteúdo competindo no Google prejudicariam o cliente.
-User-agent: *
-Disallow: /

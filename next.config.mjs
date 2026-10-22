@@ -1,17 +1,17 @@
 /**
- * A LP é publicada como HTML estático. `output: 'export'` gera uma pasta `out/`
- * que sobe tanto num subdiretório do WordPress quanto na raiz de um host estático.
+ * O site é publicado como HTML estático. `output: 'export'` gera uma pasta `out/`
+ * que sobe em qualquer hospedagem: Hostinger, Locaweb, cPanel, Netlify, Vercel,
+ * GitHub Pages ou um subdiretório de um WordPress.
  *
- * BASE_PATH controla o subdiretório. O canonical atual aponta para
- * conexxio.com.br/lps/empresa-de-ia/, então é esse o padrão em produção; em dev
- * fica vazio para o servidor local responder na raiz.
+ * NEXT_PUBLIC_BASE_PATH controla o subdiretório. O padrão é a raiz do domínio,
+ * que é o caso comum de quem hospeda o site oficial.
  *
- *   npm run build                                  → /lps/empresa-de-ia
- *   NEXT_PUBLIC_BASE_PATH= npm run build           → raiz
+ *   npm run build                                          → raiz (clinica.com.br/)
+ *   NEXT_PUBLIC_BASE_PATH=/site npm run build              → clinica.com.br/site/
+ *
+ * Todas as variáveis estão descritas no README e em `.env.example`.
  */
-const basePath =
-  process.env.NEXT_PUBLIC_BASE_PATH ??
-  (process.env.NODE_ENV === 'production' ? '/lps/empresa-de-ia' : '')
+const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? '').replace(/\/+$/, '')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
