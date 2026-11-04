@@ -67,7 +67,7 @@ export function Quadro() {
   return (
     <section className="secao secao--nevoa" id="quadro" data-cta-zona>
       <div className="wrap">
-        <div className="quadro__cabeca">
+        <div className="quadro__cabeca" data-reveal>
           <h2 className="h2">{quadro.titulo}</h2>
           <p className="lead">
             <RichText text={quadro.lead} />
@@ -141,6 +141,7 @@ export function Quadro() {
                         largura da tela, não só a pílula "Agendar". */}
                     <CtaLink
                       className="item"
+                      glow
                       style={{ animationDelay: `${Math.min(i, 12) * 24}ms` }}
                       href={whatsapp(
                         `Olá! Vim pelo site e gostaria de agendar: ${item.nome}.`,

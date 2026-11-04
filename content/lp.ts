@@ -33,15 +33,16 @@ export const site = {
   origin: new URL(SITE_URL).origin,
   nome: 'Clínica Saúde Campinas',
   /**
-   * Arquivo oficial do logotipo. Para trocar pelo vetor novo: coloque o arquivo
-   * em `public/brand/` e atualize `src`, `largura` e `altura` (as proporções
-   * reais do arquivo). O guia de identidade proíbe recolorir, esticar ou
-   * remontar o logo, então o CSS só define a altura e nunca aplica filtro.
+   * Arquivo oficial do logotipo (vetor da Linha Azul, enviado pela clínica em
+   * 04/11/2026). `largura` e `altura` guardam só a proporção do arquivo, para o
+   * navegador reservar o espaço antes de carregar. O guia de identidade proíbe
+   * recolorir, esticar ou remontar o logo, então o CSS só define a altura e
+   * nunca aplica filtro.
    */
   logo: {
-    src: '/brand/logo-clinica.png',
-    largura: 398,
-    altura: 238,
+    src: '/brand/logo-clinica-saude-campinas.svg',
+    largura: 1250,
+    altura: 248,
   },
   title: 'Clínica Saúde Campinas · Consulta, exame e dentista no Centro de Campinas',
   description:
@@ -62,8 +63,8 @@ export const site = {
   instagram: 'https://www.instagram.com/clinicasaudecampinas',
   facebook: 'https://www.facebook.com/Clinicasaudecampinas',
   responsaveis: [
-    { nome: 'Ronaldo Jorge', registro: 'CRM 57.268' },
-    { nome: 'Victoria Machado de Oliveira', registro: 'CRO 127.184' },
+    { nome: 'Mariana Drjdrjan Jorge', registro: 'CRM 246006/SP', area: 'médica' },
+    { nome: 'Victoria Machado de Oliveira', registro: 'CRO 127.184', area: 'odontológica' },
   ],
 } as const
 
@@ -282,6 +283,22 @@ export const comoFunciona = {
   cta: 'Começar pelo WhatsApp',
   ctaMensagem:
     'Olá! Vim pelo site e gostaria de agendar. Preciso de:',
+  /**
+   * Conversa ilustrativa do celular ao lado dos passos. A primeira mensagem é
+   * exatamente a que o botão "Agendar" do quadro deixa pronta; as respostas só
+   * repetem o que a clínica publica (prazo de até 15 dias, consulta e exame no
+   * mesmo endereço). Nada de horário ou preço, que não estão publicados.
+   */
+  conversa: [
+    { de: 'paciente', texto: 'Olá! Vim pelo site e gostaria de agendar: Cardiologista.' },
+    { de: 'clinica', texto: 'Olá! Vamos agendar, sim. Prefere manhã ou tarde?' },
+    { de: 'paciente', texto: 'De manhã. E o eletro, faço aí também?' },
+    {
+      de: 'clinica',
+      texto: 'Faz, sim: o eletrocardiograma é feito aqui mesmo. Já te mando as datas, em até 15 dias.',
+    },
+  ],
+  conversaLegenda: 'Conversa ilustrativa. O assunto já chega escrito quando você toca em “Agendar”.',
 } as const
 
 /* ── A CLÍNICA ────────────────────────────────────────────────────────── */
@@ -334,7 +351,11 @@ export const faq = {
     },
     {
       q: 'Quem responde pela clínica?',
-      a: 'Os responsáveis técnicos são **Ronaldo Jorge, CRM 57.268**, pela parte médica, e **Victoria Machado de Oliveira, CRO 127.184**, pela odontologia.',
+      // Montada da lista `site.responsaveis`: trocar um RT ali atualiza esta
+      // resposta, a ficha, a seção da estrutura, o rodapé e o JSON-LD juntos.
+      a: `Os responsáveis técnicos são ${site.responsaveis
+        .map((r) => `**${r.nome}, ${r.registro}**, pela parte ${r.area}`)
+        .join(', e ')}.`,
     },
     {
       q: 'Como eu agendo?',

@@ -1,4 +1,5 @@
-import { RichText } from '@/components/ui/RichText'
+import type { CSSProperties } from 'react'
+import { Acende } from '@/components/movimento/Texto'
 import { IconeMarca } from '@/components/ui/icons'
 import { aClinica, site } from '@/content/lp'
 
@@ -15,9 +16,11 @@ export function AClinica() {
     <section className="secao secao--azul" id="a-clinica">
       <div className="wrap clinica__grade">
         <div>
-          <h2 className="h2">{aClinica.titulo}</h2>
-          <p className="lead">
-            <RichText text={aClinica.texto} />
+          <h2 className="h2" data-reveal>
+            {aClinica.titulo}
+          </h2>
+          <p className="lead" data-acende>
+            <Acende texto={aClinica.texto} />
           </p>
         </div>
 
@@ -25,15 +28,20 @@ export function AClinica() {
             o quadro embaixo do texto, a direita ficava vazia da metade para o pé. */}
         <div>
           <ul className="clinica__lista">
-            {aClinica.itens.map((item) => (
-              <li className="clinica__item" key={item}>
+            {aClinica.itens.map((item, i) => (
+              <li
+                className="clinica__item"
+                key={item}
+                data-reveal
+                style={{ '--d': `${i * 90}ms` } as CSSProperties}
+              >
                 <IconeMarca className="clinica__marca" />
                 {item}
               </li>
             ))}
           </ul>
 
-          <div className="rt">
+          <div className="rt" data-reveal>
             <p className="rt__titulo">{aClinica.responsaveisTitulo}</p>
             <div className="rt__lista">
               {site.responsaveis.map((r) => (

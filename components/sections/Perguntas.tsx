@@ -19,9 +19,11 @@ export function Perguntas() {
   return (
     <section className="secao" id="perguntas">
       <div className="wrap">
-        <h2 className="h2">{faq.titulo}</h2>
+        <h2 className="h2" data-reveal>
+          {faq.titulo}
+        </h2>
 
-        <div className="faq">
+        <div className="faq" data-reveal>
           {faq.itens.map((item, i) => {
             const abertaAqui = aberta === i
             return (

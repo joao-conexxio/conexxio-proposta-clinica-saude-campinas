@@ -1,3 +1,4 @@
+import { FundoVivo } from '@/components/movimento/FundoVivo'
 import { CtaLink } from '@/components/ui/CtaLink'
 import { IconeWhatsapp } from '@/components/ui/icons'
 import { ondeFica, site, waGeral } from '@/content/lp'
@@ -13,7 +14,7 @@ export function OndeFica() {
   return (
     <section className="secao secao--nevoa" id="onde-fica">
       <div className="wrap onde__grade">
-        <div className="endereco">
+        <div className="endereco" data-reveal>
           <h2 className="h2">{ondeFica.titulo}</h2>
           <p className="endereco__texto">{ondeFica.texto}</p>
 
@@ -37,7 +38,8 @@ export function OndeFica() {
           </a>
         </div>
 
-        <div className="fechamento">
+        <div className="fechamento vivo-azul" data-reveal>
+          <FundoVivo />
           <div className="fechamento__conteudo">
             <h2 className="fechamento__titulo">{ondeFica.cta.titulo}</h2>
             <p className="fechamento__texto">{ondeFica.cta.texto}</p>

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Figtree } from 'next/font/google'
+import localFont from 'next/font/local'
 import { buildJsonLd } from '@/content/schema'
 import { GTM_ID, SITE_OFICIAL, site } from '@/content/lp'
 import './globals.css'
@@ -11,12 +11,16 @@ import './globals.css'
  * corpo pequeno e no celular.
  *
  * Os três pesos do guia: Regular (texto de apoio), Semibold (subtítulos e
- * rótulos) e Bold (títulos e CTA). Auto-hospedada pelo next/font, sem <link>
- * para fonts.googleapis, que bloquearia a renderização do H1.
+ * rótulos) e Bold (títulos e CTA), num arquivo variável só (400 a 700).
+ *
+ * O arquivo mora no projeto (`app/fonts/`, licença OFL ao lado) em vez de vir
+ * do Google Fonts: assim o build não depende de rede e nada é pedido a
+ * fonts.googleapis, que bloquearia a renderização do H1. Subconjunto latin,
+ * que cobre todo o português.
  */
-const fonte = Figtree({
-  subsets: ['latin'],
-  weight: ['400', '600', '700'],
+const fonte = localFont({
+  src: './fonts/Figtree-latin.woff2',
+  weight: '400 700',
   variable: '--font-sans',
   display: 'swap',
 })

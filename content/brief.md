@@ -51,7 +51,8 @@ Fontes:
 
 ## Responsáveis técnicos (aparecem no rodapé de todas as páginas)
 
-- RT Ronaldo Jorge — CRM 57.268
+- RT Ronaldo Jorge — CRM 57.268 *(substituído em 04/11/2026, a pedido da
+  clínica, por Mariana Drjdrjan Jorge — CRM 246006/SP)*
 - RT Victoria Machado de Oliveira — CRO 127.184
 
 ## Números que ele publica

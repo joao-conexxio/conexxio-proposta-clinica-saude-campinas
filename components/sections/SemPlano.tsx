@@ -1,4 +1,5 @@
-import { RichText } from '@/components/ui/RichText'
+import type { CSSProperties } from 'react'
+import { Acende } from '@/components/movimento/Texto'
 import { semPlano } from '@/content/lp'
 
 /**
@@ -12,15 +13,24 @@ export function SemPlano() {
     <section className="secao" id="sem-plano">
       <div className="wrap semplano__grade">
         <div>
-          <h2 className="h2">{semPlano.titulo}</h2>
-          <p className="lead">
-            <RichText text={semPlano.texto} />
+          <h2 className="h2" data-reveal>
+            {semPlano.titulo}
+          </h2>
+          {/* Acende palavra por palavra conforme a rolagem: é o argumento
+              central da página, lido no ritmo de quem rola. */}
+          <p className="lead semplano__lead" data-acende>
+            <Acende texto={semPlano.texto} />
           </p>
         </div>
 
         <div className="semplano__pontos">
-          {semPlano.pontos.map((ponto) => (
-            <div className="semplano__ponto" key={ponto.titulo}>
+          {semPlano.pontos.map((ponto, i) => (
+            <div
+              className="semplano__ponto"
+              key={ponto.titulo}
+              data-reveal
+              style={{ '--d': `${i * 120}ms` } as CSSProperties}
+            >
               <h3 className="semplano__pontoTitulo">{ponto.titulo}</h3>
               <p className="semplano__pontoTexto">{ponto.texto}</p>
             </div>

@@ -1,3 +1,7 @@
+import type { CSSProperties } from 'react'
+import { Ecg } from '@/components/movimento/Ecg'
+import { FundoVivo } from '@/components/movimento/FundoVivo'
+import { Palavras } from '@/components/movimento/Texto'
 import { CtaLink } from '@/components/ui/CtaLink'
 import { RichText } from '@/components/ui/RichText'
 import { IconeWhatsapp } from '@/components/ui/icons'
@@ -10,21 +14,29 @@ import { QUADRO_HREF, hero, site, waGeral } from '@/content/lp'
  * seguintes (onde, como falar, quanto custa o tipo de atendimento, e o prazo)
  * antes de a pessoa precisar rolar.
  *
- * É o único movimento automático da página: texto e cartão entram uma vez, no
- * carregamento (CSS, atrás de `.js` e desligado em movimento reduzido).
+ * A abertura é o momento de maior movimento da página: o fundo vivo flui na
+ * cor da marca e segue o ponteiro (ou o dedo), o título sobe palavra por
+ * palavra, o resto entra em cascata e o traçado de eletro se desenha na base.
+ * Tudo atrás de `.js` e parado sob movimento reduzido.
  */
+const atraso = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties
 export function Hero() {
   return (
     <section className="hero">
+      <FundoVivo />
+      <Ecg className="hero__ecg" batidas={9} />
+
       <div className="wrap hero__grade">
         <div className="hero__texto">
-          <h1 className="hero__h1">{hero.h1}</h1>
+          <h1 className="hero__h1">
+            <Palavras texto={hero.h1} />
+          </h1>
 
-          <p className="hero__lead">
+          <p className="hero__lead hero__entra" style={atraso(520)}>
             <RichText text={hero.lead} />
           </p>
 
-          <div className="hero__acoes" data-cta-zona>
+          <div className="hero__acoes hero__entra" style={atraso(660)} data-cta-zona>
             <CtaLink className="btn btn--acao" href={waGeral} cta="hero" external>
               <IconeWhatsapp className="btn__zap" />
               {hero.ctaPrimario}
@@ -34,13 +46,13 @@ export function Hero() {
             </a>
           </div>
 
-          <p className="hero__nota">
+          <p className="hero__nota hero__entra" style={atraso(800)}>
             <span className="hero__ponto" aria-hidden />
             Atendimento particular, sem plano de saúde
           </p>
         </div>
 
-        <aside className="ficha" aria-label="Dados da clínica">
+        <aside className="ficha hero__entra" style={atraso(380)} aria-label="Dados da clínica" data-tilt>
           <div className="ficha__topo">
             <span className="ficha__titulo">{hero.ficha.titulo}</span>
             <span className="ficha__cidade">

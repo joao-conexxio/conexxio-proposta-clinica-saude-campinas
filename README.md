@@ -14,9 +14,10 @@ PHP. Qualquer hospedagem que sirva arquivos funciona.
 - [Variáveis de ambiente](#variáveis-de-ambiente)
 - [Publicar na hospedagem](#publicar-na-hospedagem)
 - [Colocar no ar como site oficial](#colocar-no-ar-como-site-oficial)
-- [Trocar o logotipo](#trocar-o-logotipo)
+- [Logotipo](#logotipo)
 - [Editar textos e listas](#editar-textos-e-listas)
 - [Identidade visual](#identidade-visual)
+- [Movimento](#movimento)
 - [Métricas e conversão](#métricas-e-conversão)
 - [Estrutura do projeto](#estrutura-do-projeto)
 - [Pendências](#pendências)
@@ -30,7 +31,7 @@ PHP. Qualquer hospedagem que sirva arquivos funciona.
 | Framework | Next.js 15 (App Router) com `output: 'export'` → HTML estático |
 | Linguagem | TypeScript + React 19 |
 | Estilo | Um único CSS em `app/globals.css`, sem framework |
-| Fonte | Figtree (Regular, Semibold, Bold), embutida no build, sem chamada ao Google Fonts |
+| Fonte | Figtree (Regular, Semibold, Bold), arquivo dentro do projeto (`app/fonts/`): o build não depende de rede e a página não chama o Google Fonts |
 | Conteúdo | Todo em `content/lp.ts`. Nenhum texto fica espalhado pelos componentes |
 | Saída | Pasta `out/`, cerca de 1 MB no total |
 | Contato | Todas as saídas da página vão para o WhatsApp, com o assunto já escrito |
@@ -161,7 +162,6 @@ Antes de trocar o site atual por este:
 
 - [ ] `NEXT_PUBLIC_SITE_URL` com o domínio definitivo e barra no fim
 - [ ] `NEXT_PUBLIC_SITE_OFICIAL=true`
-- [ ] Logotipo vetorizado no lugar do PNG atual ([abaixo](#trocar-o-logotipo))
 - [ ] Favicon com o símbolo oficial ([abaixo](#favicon))
 - [ ] `NEXT_PUBLIC_GTM_ID` preenchido, se houver medição
 - [ ] Depois do deploy: abrir `/robots.txt` e confirmar `Allow: /` e a linha do `Sitemap`
@@ -172,41 +172,51 @@ Sem `NEXT_PUBLIC_SITE_OFICIAL=true` o site continua com `noindex` e não aparece
 no Google. Esse é o comportamento certo para a proposta e o errado para o site
 oficial.
 
-## Trocar o logotipo
+## Logotipo
+
+O logo em uso é `public/brand/logo-clinica-saude-campinas.svg`, convertido do PDF
+vetorizado que a clínica enviou em 04/11/2026. No PDF, o traço de baixo do "S"
+vinha como uma imagem dentro de um recorte; no SVG ele virou preenchimento
+vetorial com a mesma forma e a mesma cor (`#157AAE`, a do arquivo original).
+Fora isso, nada foi alterado.
 
 O guia de identidade exige o **arquivo oficial**, sem redesenhar, recolorir,
 esticar ou aplicar efeito. O código respeita isso: o CSS só define a altura do
 logo e nunca aplica filtro ou cor.
 
+### Trocar o logotipo
+
 1. Coloque o arquivo em `public/brand/` (SVG de preferência; PNG com pelo menos
-   o dobro do tamanho exibido também serve).
+   o dobro do tamanho exibido também serve). Um SVG usado como `<img>` precisa
+   ser XML válido; se ele abrir quebrado no site e inteiro no navegador, é isso.
 2. Em `content/lp.ts`, no objeto `site.logo`, atualize:
    ```ts
    logo: {
-     src: '/brand/logo-pro-clinica.svg',
-     largura: 520,   // proporções reais do arquivo
-     altura: 160,
+     src: '/brand/novo-logo.svg',
+     largura: 1250,   // só a proporção do arquivo importa
+     altura: 248,
    },
    ```
    `largura` e `altura` precisam ter a mesma proporção do arquivo. Elas servem
    para o navegador reservar o espaço certo antes da imagem carregar.
 3. Se o novo logo for mais largo ou mais alto, ajuste a altura em
    `app/globals.css`:
-   - `.cabecalho__marca img` → header (48px no desktop, 42px no celular)
-   - `.rodape__marca img` → rodapé (64px)
+   - `.cabecalho__marca img` → header (48px no desktop, 46px no celular)
+   - `.rodape__marca img` → rodapé (56px, limitado à largura da coluna)
 
-   Confira no tamanho real se "PRÓ CLÍNICA", a unidade e o símbolo continuam
-   legíveis, como pede o guia.
+   Confira no tamanho real se o nome e o símbolo continuam legíveis, como pede
+   o guia.
 
 Header e rodapé têm fundo branco, que é a aplicação preferencial do guia.
 **Não** coloque o logo sobre as áreas azuis da página.
 
 ### Favicon
 
-Enquanto o símbolo oficial não chega, o ícone da aba é um quadrado no Azul Pró
-Clínica com uma cruz branca, definido em `app/layout.tsx` (`metadata.icons`).
-Com o símbolo em mãos, salve-o como `app/icon.svg` (ou `app/icon.png`, 512×512),
-apague a chave `icons` do `metadata` e o Next passa a usar o arquivo.
+O ícone da aba é um quadrado no Azul Pró Clínica com uma cruz branca, definido
+em `app/layout.tsx` (`metadata.icons`). Ele não usa o "S" do logo porque o guia
+proíbe separar os elementos do logotipo. Se a clínica tiver uma versão oficial
+só do símbolo, salve-a como `app/icon.svg` (ou `app/icon.png`, 512×512), apague
+a chave `icons` do `metadata` e o Next passa a usar o arquivo.
 
 ## Editar textos e listas
 
@@ -254,14 +264,40 @@ texto.
 Não há verde nem vermelho na página. O ícone do WhatsApp herda a cor do botão.
 
 Outras escolhas:
-- **Movimento:** só a entrada do hero no carregamento, as respostas ao clique
-  (FAQ, filtros) e a contagem dos números. Tudo desligado para quem ativa
-  "reduzir movimento" no sistema.
 - **Acessibilidade:** contraste AA em todo texto, foco visível no teclado, link
   "Pular para o que a clínica atende", filtros com `aria-pressed` e resultado da
   busca anunciado ao leitor de tela.
 - **Celular:** o menu some abaixo de 960px e uma barra fixa com "Agendar no
   WhatsApp" aparece abaixo de 640px.
+
+## Movimento
+
+As animações vêm do proposta-kit da Conexxio, portadas para componentes React
+em `components/movimento/`. A marcação declara e um componente só executa.
+
+| Peça | Onde | O que faz |
+|---|---|---|
+| Fundo vivo (`FundoVivo`) | hero, faixa de números, cartão final | Manchas da cor da marca fluindo em WebGL, seguindo o mouse ou o dedo. No hero são azuis bem diluídas sobre branco; nas faixas azuis, as manchas só **escurecem** o azul oficial, para o texto branco nunca perder contraste |
+| Título palavra por palavra (`Palavras`) | H1 do hero | Sobe palavra por palavra no carregamento; o resto do hero entra em cascata |
+| Traçado de eletro (`Ecg`) | base do hero | Se desenha da esquerda para a direita, uma vez. É o motivo do kit para clínica geral e popular, e a clínica faz eletro, Holter e MAPA |
+| Fita (`sections/Fita`) | logo abaixo do hero | Faixa azul inclinada com tudo o que a clínica atende, correndo em loop. A lista sai do quadro de especialidades |
+| Texto que acende (`Acende` + `data-acende`) | "sem plano" e estrutura | O parágrafo acende palavra por palavra conforme a rolagem |
+| Revelação (`data-reveal`) | títulos, itens, passos | Entra subindo ao chegar na tela, em cascata (`--d` em ms) |
+| Linha do tempo | passos | O fio entre os passos se desenha e o número fica azul quando o passo entra |
+| Conversa (`Conversa`) | ao lado dos passos | Celular com uma conversa de WhatsApp que se escreve sozinha. Mensagens em `comoFunciona.conversa` (`content/lp.ts`), só com fatos publicados e com legenda de conversa ilustrativa |
+| Inclinação e brilho (`data-tilt`, `data-glow`) | cartão do hero, itens do quadro | Seguem o cursor. Só no desktop: no toque, o efeito vem da rolagem e do fundo vivo |
+
+Regras que valem para todas:
+- **Só `transform` e `opacity`** (e o canvas do fundo vivo): nada recalcula
+  layout, e a rolagem continua leve no celular.
+- **O fundo vivo pausa fora da tela** e roda em resolução reduzida. Sem WebGL,
+  vira um gradiente parado nas mesmas cores.
+- **Movimento reduzido:** quem ativa a opção no sistema vê tudo pronto e parado
+  (fita parada, texto aceso, conversa inteira).
+- **Sem JavaScript, nada fica escondido:** todo estado inicial invisível está
+  atrás da classe `.js`, que só existe com JavaScript ligado.
+
+Para desligar uma peça, basta tirar o componente ou o atributo da marcação.
 
 ## Métricas e conversão
 
@@ -290,12 +326,14 @@ sozinho.
 ```
 app/
   layout.tsx        <head>: fonte, metadados, favicon, GTM, JSON-LD
+  fonts/            Figtree (woff2) e a licença OFL
   page.tsx          ordem das seções
   globals.css       todo o visual (tokens no topo)
   robots.ts         robots.txt gerado conforme o modo (proposta/oficial)
   sitemap.ts        sitemap.xml
 components/
   chrome/           Header e Footer
+  movimento/        fundo vivo, eletro, conversa, palavras e o orquestrador
   sections/         uma seção da página por arquivo
   ui/               botão de CTA, contador, ícones, barra mobile
 content/
@@ -311,13 +349,6 @@ public/brand/       logotipo
 
 ## Pendências
 
-- **Logotipo vetorizado:** o arquivo em `public/brand/logo-clinica.png` é o logo
-  anterior, em vinho, e fica no lugar só até o vetor oficial da Linha Azul chegar.
-- **Nome da marca:** o guia é da "Pró Clínica — Linha Azul, unidade de Campinas",
-  e o site ainda usa "Clínica Saúde Campinas" (`site.nome` em `content/lp.ts`).
-  Se o nome mudar, trocar ali muda o header, o rodapé, o título da aba, o JSON-LD
-  e a mensagem do WhatsApp de uma vez. Revise também os textos de `content/lp.ts`
-  que citam o nome.
 - **Horário de funcionamento:** não está publicado em lugar nenhum. Assim que a
   clínica confirmar, vale incluir na ficha do hero e no FAQ.
 - **Telefone com DDD 11:** o WhatsApp `(11) 99300-7610` é o que está publicado no

@@ -11,6 +11,8 @@ type CtaLinkProps = {
   style?: CSSProperties
   /** Nome acessível quando o texto visível sozinho não diz para onde o link leva. */
   ariaLabel?: string
+  /** Brilho que segue o cursor no desktop (ver `Movimento`). */
+  glow?: boolean
   external?: boolean
 }
 
@@ -22,6 +24,7 @@ export function CtaLink({
   className,
   style,
   ariaLabel,
+  glow,
   external,
 }: CtaLinkProps) {
   return (
@@ -30,6 +33,7 @@ export function CtaLink({
       style={style}
       href={href}
       aria-label={ariaLabel}
+      data-glow={glow || undefined}
       onClick={() => trackCta(cta)}
       {...(external ? { target: '_blank', rel: 'noopener' } : {})}
     >

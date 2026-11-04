@@ -8,6 +8,8 @@ import { OndeFica } from '@/components/sections/OndeFica'
 import { Perguntas } from '@/components/sections/Perguntas'
 import { Quadro } from '@/components/sections/Quadro'
 import { SemPlano } from '@/components/sections/SemPlano'
+import { Fita } from '@/components/sections/Fita'
+import { Movimento } from '@/components/movimento/Movimento'
 import { BarraMobile } from '@/components/ui/BarraMobile'
 
 /**
@@ -16,11 +18,12 @@ import { BarraMobile } from '@/components/ui/BarraMobile'
  * A ordem persegue a decisão de quem chega sem plano de saúde procurando
  * atendimento, e não a apresentação da clínica:
  *
- *   promessa  →  o tamanho da operação  →  por que serve para você  →
+ *   promessa  →  tudo o que atende (fita)  →  por que serve para você  →
+ *   o tamanho da operação  →
  *   ACHAR o que você precisa  →  como agendar  →  quem responde pela clínica  →
  *   objeções  →  onde fica e o pedido.
  *
- * A diferença estrutural para o site atual está no quarto passo. Lá, as três
+ * A diferença estrutural para o site atual está no passo de ACHAR. Lá, as três
  * listas de atendimento moram em três páginas separadas e a home abre com dez
  * parágrafos de "Quem somos?"; aqui a lista inteira está na home, filtrável, e
  * cada linha é uma saída própria para o WhatsApp com o assunto já escrito.
@@ -36,8 +39,9 @@ export default function Page() {
 
       <main id="topo">
         <Hero />
-        <Numeros />
+        <Fita />
         <SemPlano />
+        <Numeros />
         <Quadro />
         <ComoFunciona />
         <AClinica />
@@ -47,6 +51,7 @@ export default function Page() {
 
       <Footer />
       <BarraMobile />
+      <Movimento />
     </>
   )
 }
