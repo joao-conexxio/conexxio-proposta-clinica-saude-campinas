@@ -7,6 +7,8 @@
     "build": "next build",
     "build:proposta": "NEXT_PUBLIC_BASE_PATH=/conexxio-proposta-clinica-saude-campinas next build",
     "build:proposta:linha-azul": "NEXT_PUBLIC_BASE_PATH=/conexxio-proposta-clinica-saude-campinas/linha-azul NEXT_PUBLIC_SITE_URL=https://joao-conexxio.github.io/conexxio-proposta-clinica-saude-campinas/linha-azul/ next build",
+    "build:proposta:viva": "NEXT_PUBLIC_BASE_PATH=/conexxio-proposta-clinica-saude-campinas/linha-azul-viva NEXT_PUBLIC_SITE_URL=https://joao-conexxio.github.io/conexxio-proposta-clinica-saude-campinas/linha-azul-viva/ next build",
+    "mapa": "node ferramentas/gerar-mapa.mjs",
     "start": "npx serve out",
     "typecheck": "tsc --noEmit"
   },

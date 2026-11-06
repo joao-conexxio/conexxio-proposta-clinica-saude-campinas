@@ -9,50 +9,53 @@ import { comoFunciona, whatsapp } from '@/content/lp'
  * sequência. A promessa está no título: nenhum dos passos exige ir até lá antes
  * de ter data marcada.
  *
- * Ao lado, o celular com a conversa que se escreve sozinha mostra o passo 1
- * acontecendo: a mensagem chega com o assunto já escrito. No celular, ele vem
- * depois dos passos.
+ * Ao lado, o celular com a conversa que se escreve sozinha mostra os passos
+ * acontecendo: cada passo acende quando a conversa chega nele (`data-passo`,
+ * lido pelo componente `Conversa`).
+ *
+ * Celular primeiro: título, passos, o celular e só então o botão, para o
+ * pedido vir depois da demonstração. No desktop o celular ocupa a coluna da
+ * direita inteira e o botão volta para baixo dos passos.
  */
 export function ComoFunciona() {
   return (
     <section className="secao" id="como-funciona">
       <div className="wrap comoFunciona__grade">
-        <div>
-          <h2 className="h2" data-reveal>
-            {comoFunciona.titulo}
-          </h2>
+        <h2 className="h2 comoFunciona__titulo" data-reveal>
+          {comoFunciona.titulo}
+        </h2>
 
-          <ol className="passos">
-            {comoFunciona.passos.map((passo, i) => (
-              <li
-                className="passo"
-                key={passo.titulo}
-                data-reveal
-                style={{ '--d': `${i * 140}ms` } as CSSProperties}
-              >
-                <span className="passo__n" aria-hidden>
-                  {i + 1}
-                </span>
-                <h3 className="passo__titulo">{passo.titulo}</h3>
-                <p className="passo__texto">{passo.texto}</p>
-              </li>
-            ))}
-          </ol>
-
-          <div className="passos__cta" data-cta-zona>
-            <CtaLink
-              className="btn btn--acao"
-              href={whatsapp(comoFunciona.ctaMensagem)}
-              cta="como-funciona"
-              external
+        <ol className="passos">
+          {comoFunciona.passos.map((passo, i) => (
+            <li
+              className="passo"
+              key={passo.titulo}
+              data-reveal
+              data-passo={i}
+              style={{ '--d': `${i * 140}ms` } as CSSProperties}
             >
-              <IconeWhatsapp className="btn__zap" />
-              {comoFunciona.cta}
-            </CtaLink>
-          </div>
-        </div>
+              <span className="passo__n" aria-hidden>
+                {i + 1}
+              </span>
+              <h3 className="passo__titulo">{passo.titulo}</h3>
+              <p className="passo__texto">{passo.texto}</p>
+            </li>
+          ))}
+        </ol>
 
-        <Conversa />
+        <Conversa className="comoFunciona__demo" />
+
+        <div className="passos__cta" data-cta-zona>
+          <CtaLink
+            className="btn btn--acao"
+            href={whatsapp(comoFunciona.ctaMensagem)}
+            cta="como-funciona"
+            external
+          >
+            <IconeWhatsapp className="btn__zap" />
+            {comoFunciona.cta}
+          </CtaLink>
+        </div>
       </div>
     </section>
   )

@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
+import { Formas } from '@/components/movimento/Formas'
 import { Acende } from '@/components/movimento/Texto'
-import { IconeMarca } from '@/components/ui/icons'
+import { IconeSaude } from '@/components/ui/IconeSaude'
 import { aClinica, site } from '@/content/lp'
 
 /**
@@ -10,10 +11,14 @@ import { aClinica, site } from '@/content/lp'
  * Os responsáveis técnicos ficam aqui, com registro no conselho, porque num
  * site de saúde esse é o dado que separa clínica de improviso — e no site atual
  * ele está escondido em letra miúda no rodapé.
+ *
+ * As formas de fundo (as mesmas do topo, em branco) ocupam no desktop o vazio
+ * embaixo do texto, o lugar que as fotos da clínica vão ocupar quando
+ * chegarem. No celular elas ficam no canto do título, cortadas pela borda.
  */
 export function AClinica() {
   return (
-    <section className="secao secao--azul" id="a-clinica">
+    <section className="secao secao--azul clinica" id="a-clinica">
       <div className="wrap clinica__grade">
         <div>
           <h2 className="h2" data-reveal>
@@ -22,6 +27,7 @@ export function AClinica() {
           <p className="lead" data-acende>
             <Acende texto={aClinica.texto} />
           </p>
+          <Formas className="formas--azul clinica__formas" paralaxe={0.08} />
         </div>
 
         {/* A lista e o quadro dos responsáveis dividem a coluna da direita: com
@@ -31,12 +37,14 @@ export function AClinica() {
             {aClinica.itens.map((item, i) => (
               <li
                 className="clinica__item"
-                key={item}
+                key={item.texto}
                 data-reveal
                 style={{ '--d': `${i * 90}ms` } as CSSProperties}
               >
-                <IconeMarca className="clinica__marca" />
-                {item}
+                <span className="clinica__ico">
+                  <IconeSaude nome={item.icone} />
+                </span>
+                {item.texto}
               </li>
             ))}
           </ul>

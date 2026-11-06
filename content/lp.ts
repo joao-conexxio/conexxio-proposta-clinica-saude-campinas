@@ -11,6 +11,8 @@
  * o parágrafo, para a página ser legível em varredura.
  */
 
+import type { NomeIcone } from '@/components/ui/icones-saude-dados'
+
 /**
  * Endereço público final. Vem do ambiente no build (ver `.env.example`); sem
  * ele, aponta para a proposta publicada no GitHub Pages.
@@ -167,6 +169,8 @@ export const semPlano = {
  */
 export type ItemQuadro = {
   nome: string
+  /** Ícone de traço ao lado do nome (desenhos em `components/ui/icones-saude-dados.ts`). */
+  icone: NomeIcone
   nota?: string
   /**
    * Palavras que a pessoa realmente digita, e que não estão no nome técnico:
@@ -180,6 +184,7 @@ export type GrupoQuadro = {
   label: string
   titulo: string
   resumo: string
+  icone: NomeIcone
   itens: readonly ItemQuadro[]
 }
 
@@ -187,54 +192,57 @@ const GRUPOS: readonly GrupoQuadro[] = [
   {
     id: 'medicina',
     label: 'Medicina',
+    icone: 'estetoscopio',
     titulo: 'Especialidades médicas',
     resumo: 'Mais de 20 especialistas atendendo no Centro de Campinas.',
     itens: [
-      { nome: 'Clínico geral', chaves: 'consulta geral checkup atestado' },
-      { nome: 'Cardiologista', chaves: 'coracao cardio pressao' },
-      { nome: 'Dermatologista', chaves: 'pele mancha acne cabelo unha' },
-      { nome: 'Endocrinologista', chaves: 'tireoide diabetes hormonio peso' },
-      { nome: 'Ginecologista', chaves: 'mulher preventivo utero gravidez' },
-      { nome: 'Nutricionista', chaves: 'dieta alimentacao emagrecer' },
-      { nome: 'Oftalmologista', chaves: 'olho vista oculos grau' },
-      { nome: 'Ortopedista', chaves: 'osso coluna joelho fratura dor' },
-      { nome: 'Otorrinolaringologista', chaves: 'otorrino ouvido garganta nariz sinusite' },
-      { nome: 'Pediatra', chaves: 'crianca bebe filho' },
-      { nome: 'Psicólogo', chaves: 'terapia ansiedade psicologia' },
-      { nome: 'Psiquiatra', chaves: 'depressao ansiedade saude mental' },
-      { nome: 'Urologista', chaves: 'homem prostata rim urina' },
-      { nome: 'Vascular', chaves: 'varizes circulacao veia perna' },
+      { nome: 'Clínico geral', icone: 'estetoscopio', chaves: 'consulta geral checkup atestado' },
+      { nome: 'Cardiologista', icone: 'coracao', chaves: 'coracao cardio pressao' },
+      { nome: 'Dermatologista', icone: 'pele', chaves: 'pele mancha acne cabelo unha' },
+      { nome: 'Endocrinologista', icone: 'molecula', chaves: 'tireoide diabetes hormonio peso' },
+      { nome: 'Ginecologista', icone: 'mulher', chaves: 'mulher preventivo utero gravidez' },
+      { nome: 'Nutricionista', icone: 'nutricao', chaves: 'dieta alimentacao emagrecer' },
+      { nome: 'Oftalmologista', icone: 'olho', chaves: 'olho vista oculos grau' },
+      { nome: 'Ortopedista', icone: 'osso', chaves: 'osso coluna joelho fratura dor' },
+      { nome: 'Otorrinolaringologista', icone: 'ouvido', chaves: 'otorrino ouvido garganta nariz sinusite' },
+      { nome: 'Pediatra', icone: 'bebe', chaves: 'crianca bebe filho' },
+      { nome: 'Psicólogo', icone: 'conversa', chaves: 'terapia ansiedade psicologia' },
+      { nome: 'Psiquiatra', icone: 'cerebro', chaves: 'depressao ansiedade saude mental' },
+      { nome: 'Urologista', icone: 'rim', chaves: 'homem prostata rim urina' },
+      { nome: 'Vascular', icone: 'vasos', chaves: 'varizes circulacao veia perna' },
     ],
   },
   {
     id: 'odontologia',
     label: 'Odontologia',
+    icone: 'dente',
     titulo: 'Odontologia',
     resumo: 'Mais de 150 procedimentos, do clínico geral ao implante.',
     itens: [
-      { nome: 'Dentista clínico geral', chaves: 'dentista limpeza restauracao carie canal' },
-      { nome: 'Implante dentário', chaves: 'dentista implante dente perdido' },
-      { nome: 'Prótese', chaves: 'dentista dentadura ponte coroa' },
-      { nome: 'Ortodontia', nota: 'aparelho', chaves: 'dentista aparelho dente torto' },
-      { nome: 'Odontopediatria', nota: 'crianças', chaves: 'dentista crianca bebe filho' },
+      { nome: 'Dentista clínico geral', icone: 'dente', chaves: 'dentista limpeza restauracao carie canal' },
+      { nome: 'Implante dentário', icone: 'implante', chaves: 'dentista implante dente perdido' },
+      { nome: 'Prótese', icone: 'protese', chaves: 'dentista dentadura ponte coroa' },
+      { nome: 'Ortodontia', icone: 'aparelho', nota: 'aparelho', chaves: 'dentista aparelho dente torto' },
+      { nome: 'Odontopediatria', icone: 'denteCrianca', nota: 'crianças', chaves: 'dentista crianca bebe filho' },
     ],
   },
   {
     id: 'exames',
     label: 'Exames',
+    icone: 'microscopio',
     titulo: 'Exames e diagnóstico',
     resumo: 'Coleta e laudo na própria clínica, sem encaminhamento para fora.',
     itens: [
-      { nome: 'Exames de laboratório', nota: 'mais de 3 mil tipos', chaves: 'sangue urina fezes coleta colesterol glicose' },
-      { nome: 'Ultrassonografia', chaves: 'ultrassom usg gravidez abdome' },
-      { nome: 'Raio-X', chaves: 'raio x radiografia osso torax' },
-      { nome: 'Tomografia', chaves: 'tomo imagem' },
-      { nome: 'Eletrocardiograma', chaves: 'ecg eletro coracao' },
-      { nome: 'Ecocardiograma', chaves: 'eco coracao ultrassom do coracao' },
-      { nome: 'Holter 24 horas', chaves: 'coracao batimento monitor' },
-      { nome: 'MAPA 24 horas', chaves: 'pressao arterial monitor' },
-      { nome: 'Sexagem fetal', chaves: 'sexo do bebe gravidez menino menina' },
-      { nome: 'Teste de DNA', chaves: 'paternidade exame genetico' },
+      { nome: 'Exames de laboratório', icone: 'tubo', nota: 'mais de 3 mil tipos', chaves: 'sangue urina fezes coleta colesterol glicose' },
+      { nome: 'Ultrassonografia', icone: 'ultrassom', chaves: 'ultrassom usg gravidez abdome' },
+      { nome: 'Raio-X', icone: 'raioX', chaves: 'raio x radiografia osso torax' },
+      { nome: 'Tomografia', icone: 'tomografia', chaves: 'tomo imagem' },
+      { nome: 'Eletrocardiograma', icone: 'batimento', chaves: 'ecg eletro coracao' },
+      { nome: 'Ecocardiograma', icone: 'ecocardio', chaves: 'eco coracao ultrassom do coracao' },
+      { nome: 'Holter 24 horas', icone: 'holter', chaves: 'coracao batimento monitor' },
+      { nome: 'MAPA 24 horas', icone: 'pressao', chaves: 'pressao arterial monitor' },
+      { nome: 'Sexagem fetal', icone: 'gota', chaves: 'sexo do bebe gravidez menino menina' },
+      { nome: 'Teste de DNA', icone: 'dna', chaves: 'paternidade exame genetico' },
     ],
   },
 ]
@@ -288,16 +296,29 @@ export const comoFunciona = {
    * exatamente a que o botão "Agendar" do quadro deixa pronta; as respostas só
    * repetem o que a clínica publica (prazo de até 15 dias, consulta e exame no
    * mesmo endereço). Nada de horário ou preço, que não estão publicados.
+   *
+   * `passo` é o índice em `passos` que a mensagem ilustra: quando a conversa
+   * chega nele, o passo acende ao lado e uma etiqueta com o nome dele aparece
+   * dentro do celular (é ela que mostra a ligação no celular, onde os passos
+   * ficam acima e fora da tela). `hora` é só cenário.
    */
   conversa: [
-    { de: 'paciente', texto: 'Olá! Vim pelo site e gostaria de agendar: Cardiologista.' },
-    { de: 'clinica', texto: 'Olá! Vamos agendar, sim. Prefere manhã ou tarde?' },
-    { de: 'paciente', texto: 'De manhã. E o eletro, faço aí também?' },
     {
+      passo: 0,
+      de: 'paciente',
+      hora: '10:02',
+      texto: 'Olá! Vim pelo site e gostaria de agendar: Cardiologista.',
+    },
+    { passo: 1, de: 'clinica', hora: '10:03', texto: 'Olá! Vamos agendar, sim. Prefere manhã ou tarde?' },
+    { passo: 1, de: 'paciente', hora: '10:03', texto: 'De manhã. E o eletro, faço aí também?' },
+    {
+      passo: 2,
       de: 'clinica',
+      hora: '10:04',
       texto: 'Faz, sim: o eletrocardiograma é feito aqui mesmo. Já te mando as datas, em até 15 dias.',
     },
   ],
+  conversaCampo: 'Mensagem',
   conversaLegenda: 'Conversa ilustrativa. O assunto já chega escrito quando você toca em “Agendar”.',
 } as const
 
@@ -308,12 +329,12 @@ export const aClinica = {
   texto:
     'A unidade do Centro reúne consultórios, laboratório de coleta próprio e sala de imagem. É isso que permite **resolver num endereço só** o que normalmente exige três agendamentos em três lugares diferentes.',
   itens: [
-    'Consultórios para mais de 20 especialidades médicas',
-    'Laboratório próprio para coleta de exames',
-    'Sala de ultrassonografia, raio-X e tomografia',
-    'Consultórios odontológicos com mais de 150 procedimentos',
-    'Acompanhamento pré e pós-operatório na mesma clínica',
-  ],
+    { texto: 'Consultórios para mais de 20 especialidades médicas', icone: 'estetoscopio' },
+    { texto: 'Laboratório próprio para coleta de exames', icone: 'tubo' },
+    { texto: 'Sala de ultrassonografia, raio-X e tomografia', icone: 'ultrassom' },
+    { texto: 'Consultórios odontológicos com mais de 150 procedimentos', icone: 'dente' },
+    { texto: 'Acompanhamento pré e pós-operatório na mesma clínica', icone: 'agenda' },
+  ] satisfies ReadonlyArray<{ texto: string; icone: NomeIcone }>,
   responsaveisTitulo: 'Quem responde tecnicamente pela clínica',
   responsaveisNota:
     'Registro profissional é o que separa clínica de improviso. Os dois responsáveis técnicos estão registrados nos conselhos e respondem pelo atendimento médico e odontológico.',
@@ -371,6 +392,7 @@ export const ondeFica = {
   // Sem repetir o endereço: ele aparece logo abaixo, como campo de ficha.
   texto: 'A mesma porta serve para consulta, para exame e para o dentista.',
   mapaRotulo: 'Abrir no Google Maps',
+  mapaRotuloCurto: 'Abrir no Maps',
   cta: {
     titulo: 'Vamos marcar?',
     texto:

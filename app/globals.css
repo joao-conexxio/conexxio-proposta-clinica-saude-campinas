@@ -421,14 +421,16 @@ button {
   z-index: 1;
 }
 
-/* Traçado de eletro atravessando a base do hero, desenhado uma vez. */
-.hero__ecg {
+/* Traçado de eletro atravessando a base do hero. */
+.ecg.hero__ecg--base {
   position: absolute;
   left: 0;
   right: 0;
   bottom: clamp(1rem, 0.5rem + 2vw, 2.25rem);
   z-index: 0;
-  opacity: 0.55;
+}
+.ecg.hero__ecg--celular {
+  display: none;
 }
 
 .hero__grade {
@@ -461,22 +463,17 @@ button {
   margin-top: 2.2rem;
 }
 
-.hero__nota {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 1.5rem;
-  font-size: var(--t-mini);
-  font-weight: 600;
-  color: var(--apoio);
+/* Coluna do cartão: segura as formas de fundo centradas atrás dele. */
+.hero__lado {
+  position: relative;
 }
-.hero__ponto {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--azul);
-  flex: none;
-  box-shadow: 0 0 0 4px var(--azul-claro);
+.hero__formas {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: 40rem;
+  margin: -20rem 0 0 -20rem;
 }
 
 /* Ficha: o cartão de dados da clínica, respondendo onde, como falar, que tipo
@@ -593,9 +590,37 @@ button {
   }
 }
 @media (max-width: 640px) {
+  .hero {
+    padding-bottom: 5rem;
+  }
+  .hero__grade {
+    gap: 1.75rem;
+  }
   .hero__acoes {
     flex-direction: column;
     margin-top: 1.8rem;
+  }
+  /* No celular o cartão fica abaixo da primeira tela: as formas sobem para o
+     canto do título, cortadas pela borda, e o eletro vem logo depois dos
+     botões, de ponta a ponta da tela. */
+  .hero__lado {
+    position: static;
+  }
+  .hero__formas {
+    top: -8.5rem;
+    left: auto;
+    right: calc(var(--gutter) * -1 - 7rem);
+    width: 21rem;
+    margin: 0;
+  }
+  .ecg.hero__ecg--base {
+    display: none;
+  }
+  .ecg.hero__ecg--celular {
+    display: block;
+    height: 4.25rem;
+    margin: 2rem calc(var(--gutter) * -1) 0;
+    --ecg-ritmo: 2.6s;
   }
   /* Os responsáveis técnicos voltam na seção da estrutura e no rodapé. No
      celular, repeti-los aqui só empurra os números para baixo. */
@@ -717,61 +742,124 @@ button {
   border-bottom: 1px solid var(--linha-forte);
 }
 
+/**
+ * Filtros: um controle segmentado. O destaque azul é uma peça só, que desliza
+ * de um filtro para o outro (o componente mede o botão ativo). Sem JavaScript
+ * o botão ativo pinta o próprio fundo, então o estado nunca some.
+ */
+.quadro__controles {
+  position: relative;
+}
+/* Marca o ponto em que a faixa de filtros gruda no topo (só conta no celular). */
+.quadro__sentinela {
+  position: absolute;
+  top: 0;
+  height: 1px;
+  width: 1px;
+}
 .abas {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  gap: 2px;
+  padding: 4px;
+  background: var(--branco);
+  border: 1px solid var(--linha-forte);
+  border-radius: var(--raio-pill);
 }
 .aba {
-  padding: 0.62rem 1.2rem;
+  position: relative;
+  padding: 0.6rem 1.15rem;
   border-radius: var(--raio-pill);
-  border: 1px solid var(--linha-forte);
-  background: var(--branco);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--apoio);
-  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease),
-    color 0.2s var(--ease);
+  white-space: nowrap;
+  transition: color 0.3s var(--ease), background-color 0.2s var(--ease);
 }
 .aba:hover {
-  border-color: var(--azul);
   color: var(--azul);
 }
 .aba[aria-pressed="true"] {
   background: var(--azul);
-  border-color: var(--azul);
   color: var(--branco);
 }
+.abas--viva .aba[aria-pressed="true"] {
+  background: transparent;
+}
+.abas__indicador {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: 0;
+  z-index: -1;
+  border-radius: var(--raio-pill);
+  background: var(--azul);
+  opacity: 0;
+  transition: transform 0.45s var(--ease), width 0.45s var(--ease);
+}
+.abas--viva .abas__indicador {
+  opacity: 1;
+}
 
-/* No celular os filtros ficam numa linha só, que rola de lado se faltar
-   espaço, em vez de quebrar e deixar um filtro sozinho embaixo. A faixa vai
-   até a borda da tela para o corte indicar que há mais. */
+/* No celular a lista ocupa quase quatro telas: os filtros ficam presos no
+   topo enquanto ela passa, numa faixa da largura da tela. A busca fica no
+   fluxo, logo abaixo. `display: contents` tira a caixa dos controles para a
+   faixa poder grudar em relação à seção inteira. */
 @media (max-width: 640px) {
   .quadro__controles {
-    gap: 0.85rem;
+    display: contents;
+  }
+  .quadro__sentinela {
+    position: static;
+    margin-top: 1.9rem;
+  }
+  .quadro__filtros {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 0.55rem var(--gutter);
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.25s var(--ease), border-color 0.25s var(--ease);
+  }
+  .quadro__filtros.is-preso {
+    background: rgba(243, 245, 247, 0.92);
+    backdrop-filter: saturate(160%) blur(12px);
+    -webkit-backdrop-filter: saturate(160%) blur(12px);
+    border-bottom-color: var(--linha);
   }
   .abas {
-    flex-wrap: nowrap;
+    display: flex;
+    width: 100%;
     overflow-x: auto;
     scrollbar-width: none;
-    margin-inline: calc(var(--gutter) * -1);
-    padding-inline: var(--gutter);
-    scroll-padding-inline: var(--gutter);
-    width: calc(100% + var(--gutter) * 2);
   }
   .abas::-webkit-scrollbar {
     display: none;
   }
   .aba {
-    flex: none;
+    flex: 1 0 auto;
     min-height: 44px;
+    padding-inline: 0.7rem;
   }
   .busca {
     max-width: none;
-    flex-basis: 100%;
+    margin-top: 0.6rem;
   }
   .busca__campo {
     min-height: 48px;
+  }
+  .quadro__resumo {
+    scroll-margin-top: 5.25rem;
+  }
+}
+@media (max-width: 370px) {
+  .aba {
+    padding-inline: 0.5rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -845,7 +933,9 @@ button {
 
 .quadro__lista {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  /* 320px: com o ícone, é o mínimo para "Otorrinolaringologista" caber
+     inteiro ao lado do "Agendar". */
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 0.75rem;
   margin-top: 1.25rem;
 }
@@ -858,9 +948,8 @@ button {
 .item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.9rem;
-  padding: 0.95rem 0.95rem 0.95rem 1.2rem;
+  gap: 0.75rem;
+  padding: 0.8rem 0.8rem 0.8rem 0.75rem;
   background: var(--branco);
   border: 1px solid var(--linha);
   border-radius: var(--raio-p);
@@ -871,7 +960,39 @@ button {
 .item:hover {
   border-color: var(--azul-linha);
 }
+/* Ícone do atendimento: azul claro em repouso, azul cheio quando a linha
+   recebe o ponteiro ou o toque. */
+.item__ico {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 12px;
+  background: var(--azul-claro);
+  color: var(--azul);
+  transition: background-color 0.25s var(--ease), color 0.25s var(--ease),
+    transform 0.35s var(--ease);
+}
+.item__ico svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+.item:hover .item__ico,
+.item:active .item__ico,
+.item:focus-visible .item__ico {
+  background: var(--azul);
+  color: var(--branco);
+}
+.item:active .item__ico {
+  transform: scale(0.94);
+}
 .item__nome {
+  flex: 1;
+  min-width: 0;
+  /* Último recurso em tela estreita: quebra com hífen, em português. */
+  hyphens: auto;
+  overflow-wrap: break-word;
   font-size: 1rem;
   font-weight: 600;
   color: var(--tinta);
@@ -888,8 +1009,8 @@ button {
   flex: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.5rem 0.9rem;
+  gap: 0.3rem;
+  padding: 0.45rem 0.75rem;
   border-radius: var(--raio-pill);
   border: 1.5px solid var(--azul-linha);
   color: var(--azul);
@@ -924,10 +1045,20 @@ button {
     overflow: hidden;
   }
   .item {
-    min-height: 56px;
-    padding: 0.7rem 0.8rem 0.7rem 1rem;
+    min-height: 60px;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
     border: 0;
     border-radius: 0;
+  }
+  .item__ico {
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 10px;
+  }
+  .item__ico svg {
+    width: 1.3rem;
+    height: 1.3rem;
   }
   .quadro__lista > li + li .item {
     border-top: 1px solid var(--linha);
@@ -977,14 +1108,33 @@ button {
 .grupo + .grupo {
   margin-top: 2.75rem;
 }
+.grupo__cabeca {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 1.9rem;
+}
+.grupo__ico {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--branco);
+}
+.grupo__ico svg {
+  width: 1.55rem;
+  height: 1.55rem;
+}
 .grupo__titulo {
   font-size: var(--t-h3);
   color: var(--tinta);
   letter-spacing: -0.015em;
-  margin-top: 1.9rem;
 }
 .grupo__resumo {
-  margin-top: 0.3rem;
+  margin-top: 0.2rem;
   font-size: 0.96rem;
   color: var(--apoio);
 }
@@ -997,11 +1147,36 @@ button {
  * em cinza é o cinza oficial no papel que o guia dá a ele — elemento gráfico de
  * apoio — e no tamanho em que ele passa no contraste.
  */
-.comoFunciona__grade {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  gap: clamp(2.5rem, 1rem + 5vw, 5.5rem);
-  align-items: center;
+/* Celular primeiro: título, passos, a demonstração e o botão, nessa ordem.
+   No desktop o celular ocupa a coluna da direita de cima a baixo. */
+.comoFunciona__demo {
+  margin-top: 2.75rem;
+}
+@media (min-width: 961px) {
+  .comoFunciona__grade {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    grid-template-areas:
+      "titulo demo"
+      "passos demo"
+      "cta demo";
+    grid-template-rows: auto auto 1fr;
+    column-gap: clamp(2.5rem, 1rem + 5vw, 5.5rem);
+  }
+  .comoFunciona__titulo {
+    grid-area: titulo;
+  }
+  .passos {
+    grid-area: passos;
+  }
+  .comoFunciona__demo {
+    grid-area: demo;
+    align-self: center;
+    margin-top: 0;
+  }
+  .passos__cta {
+    grid-area: cta;
+  }
 }
 
 /* Linha do tempo vertical: numeral à esquerda e um fio cinza ligando um passo
@@ -1053,6 +1228,45 @@ button {
 .passo.is-in .passo__n {
   border-color: var(--azul);
   color: var(--azul);
+}
+
+/* Demonstração rodando (o componente `Conversa` liga `.is-demo` na lista e
+   marca cada passo): o passo da vez fica azul cheio, os já feitos ficam com o
+   contorno azul e o fio até o próximo se desenha. */
+.passos.is-demo .passo__n {
+  border-color: var(--linha);
+  color: var(--cinza);
+  transition: border-color 0.4s var(--ease), color 0.4s var(--ease),
+    background-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+}
+.passos.is-demo .passo.is-feito .passo__n {
+  border-color: var(--azul);
+  color: var(--azul);
+}
+.passos.is-demo .passo.is-ativo .passo__n {
+  border-color: var(--azul);
+  background: var(--azul);
+  color: var(--branco);
+  box-shadow: 0 0 0 6px var(--azul-claro);
+}
+.passo__titulo {
+  transition: color 0.4s var(--ease);
+}
+.passos.is-demo .passo.is-ativo .passo__titulo {
+  color: var(--azul);
+}
+.js .passos.is-demo .passo:not(:last-child)::after {
+  transform: scaleY(0);
+  transition-delay: 0s;
+}
+.js .passos.is-demo .passo.is-feito:not(:last-child)::after {
+  transform: none;
+}
+.passo:not(:last-child)::after {
+  background: var(--linha);
+}
+.passos.is-demo .passo.is-feito:not(:last-child)::after {
+  background: var(--azul);
 }
 .passo__titulo {
   margin-top: 0.55rem;
@@ -1109,11 +1323,47 @@ button {
 .clinica__item:first-child {
   border-top: 1px solid var(--linha-clara);
 }
-.clinica__marca {
+.clinica {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.clinica__grade {
+  position: relative;
+  z-index: 1;
+}
+.clinica__item {
+  align-items: center;
+  padding-block: 0.7rem;
+}
+.clinica__ico {
   flex: none;
-  width: 16px;
-  height: 16px;
-  margin-top: 0.3rem;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  border: 1px solid var(--linha-clara);
+}
+.clinica__ico svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+/* Desktop: as formas no vazio embaixo do texto. */
+.clinica__formas {
+  width: min(100%, 18rem);
+  margin-top: 3rem;
+}
+/* Celular: no canto do título, atrás do texto, cortadas pela borda. */
+@media (max-width: 860px) {
+  .clinica__formas {
+    position: absolute;
+    z-index: -1;
+    top: -6.5rem;
+    right: -9rem;
+    width: 19rem;
+    margin: 0;
+  }
 }
 
 .rt {
@@ -1269,37 +1519,230 @@ button {
   max-width: 34ch;
 }
 
-.endereco__campo {
-  margin-top: 1.9rem;
-  padding: 1.2rem 1.4rem;
+/**
+ * Cartão de localização: o mapa desenhado do Centro em cima e o endereço
+ * embaixo, tudo um link só para o Google Maps.
+ */
+.local {
+  display: block;
+  margin-top: 1.75rem;
   background: var(--branco);
   border: 1px solid var(--linha);
-  border-radius: var(--raio-p);
-  align-self: flex-start;
+  border-radius: var(--raio);
+  overflow: hidden;
+  transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.local:hover {
+  border-color: var(--azul-linha);
+  box-shadow: var(--sombra);
+}
+.local__ficha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem 1.1rem 1.2rem;
+}
+.local__dados > span {
+  display: block;
 }
 .endereco__rotulo {
-  display: block;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--apoio);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.2rem;
 }
 .endereco__rua {
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 700;
   letter-spacing: -0.012em;
   line-height: 1.3;
   color: var(--tinta);
 }
 .endereco__cidade {
-  margin-top: 0.25rem;
+  margin-top: 0.15rem;
   font-size: 0.94rem;
   color: var(--apoio);
 }
+.local__abrir {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  padding: 0.5rem 0.95rem;
+  border-radius: var(--raio-pill);
+  border: 1.5px solid var(--azul-linha);
+  color: var(--azul);
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease),
+    border-color 0.2s var(--ease);
+}
+.local:hover .local__abrir,
+.local:active .local__abrir {
+  background: var(--azul);
+  border-color: var(--azul);
+  color: var(--branco);
+}
+.local__seta {
+  width: 13px;
+  height: 13px;
+}
+.local__credito {
+  margin-top: 0.6rem;
+  font-size: 0.75rem;
+  color: var(--apoio);
+}
+.local__credito a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
-.endereco__mapa {
-  margin-top: 1.6rem;
-  align-self: flex-start;
+/* O mapa: linhas finas em cinza, a rua da clínica no azul oficial. */
+.mapa {
+  position: relative;
+  height: 16rem;
+  overflow: hidden;
+  isolation: isolate;
+  border-bottom: 1px solid var(--linha);
+}
+.mapa__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* No celular a caixa é estreita: aproxima um pouco para os nomes das ruas
+     terem tamanho de leitura. */
+  transform: scale(1.2);
+  transition: transform 0.8s var(--ease);
+}
+.mapa__areas path {
+  fill: color-mix(in srgb, var(--azul) 7%, var(--branco));
+}
+.via {
+  fill: none;
+  stroke: #d6dbdf;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+}
+.via--av {
+  stroke: #c5cbd0;
+  stroke-width: 7.5;
+}
+.via--rp {
+  stroke-width: 5;
+}
+.via--r {
+  stroke-width: 3.5;
+}
+.via--p {
+  stroke: #e2e6e9;
+  stroke-width: 3;
+}
+.via--destaque {
+  stroke: var(--azul);
+  stroke-width: 6.5;
+}
+.mapa__rotulos text {
+  font-family: var(--f-sans);
+  font-size: 19px;
+  font-weight: 600;
+  fill: var(--apoio);
+}
+.mapa__rotulos text:first-child {
+  fill: var(--azul);
+}
+/* As ruas se desenham de dentro para fora quando o mapa chega na tela. */
+.js .mapa .via {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1s var(--ease) var(--a, 0ms);
+}
+.js .mapa .via--destaque {
+  transition-duration: 1.3s;
+}
+.js .mapa.is-in .via {
+  stroke-dashoffset: 0;
+}
+.js .mapa__areas,
+.js .mapa__rotulos {
+  opacity: 0;
+  transition: opacity 0.7s var(--ease) 0.9s;
+}
+.js .mapa.is-in .mapa__areas,
+.js .mapa.is-in .mapa__rotulos {
+  opacity: 1;
+}
+/* Pin no 927: cai no lugar e pulsa em ondas, como o "você está aqui". */
+.mapa__pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: -1.25rem 0 0 -1.25rem;
+  display: grid;
+  place-items: center;
+}
+.mapa__ponto {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--branco);
+  box-shadow: 0 0 0 4px var(--branco), 0 8px 18px -8px rgba(16, 70, 105, 0.7);
+}
+.mapa__ponto svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+.mapa__onda {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--azul);
+  opacity: 0;
+}
+.js .mapa__ponto {
+  opacity: 0;
+  transform: translateY(-16px) scale(0.6);
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s, opacity 0.3s ease 0.35s;
+}
+.js .mapa.is-in .mapa__ponto {
+  opacity: 1;
+  transform: none;
+}
+.js .mapa.is-in .mapa__onda {
+  animation: mapa-onda 2.8s var(--ease) 1s infinite;
+}
+.js .mapa.is-in .mapa__onda + .mapa__onda {
+  animation-delay: 2.4s;
+}
+@keyframes mapa-onda {
+  from {
+    transform: scale(0.85);
+    opacity: 0.3;
+  }
+  to {
+    transform: scale(3.6);
+    opacity: 0;
+  }
+}
+@media (min-width: 641px) {
+  .mapa {
+    height: 17.5rem;
+  }
+  .mapa__svg {
+    transform: none;
+  }
+  .local:hover .mapa__svg {
+    transform: scale(1.04);
+  }
 }
 
 /* Cartão de fechamento: azul cheio com o fundo vivo, o pedido final. */
@@ -1365,8 +1808,6 @@ button {
   }
 }
 @media (max-width: 640px) {
-  .endereco__campo,
-  .endereco__mapa,
   .fechamento__btn {
     align-self: stretch;
     width: 100%;
@@ -1656,29 +2097,169 @@ button {
   }
 }
 
-/* Eletro: traço no azul oficial, desenhado da esquerda para a direita. */
+/**
+ * Eletro: a linha de base no azul oficial, desenhada da esquerda para a
+ * direita uma vez, e por cima dela um trecho mais forte que corre sem parar,
+ * como num monitor. A "janela" anda para a direita e o desenho dentro dela
+ * anda para a esquerda na mesma medida (30% da largura), então o traço não
+ * se mexe: só o trecho aceso passa. O rastro sai da máscara em degradê.
+ */
 .ecg {
+  --ecg-ritmo: 3.8s;
+  position: relative;
   display: block;
   width: 100%;
   height: clamp(70px, 9vw, 130px);
+  overflow-x: clip;
+}
+.ecg svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   overflow: visible;
 }
 .ecg path {
   fill: none;
   stroke: var(--azul);
-  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
-.js .ecg path {
+.ecg__base path {
+  stroke-width: 1.6;
+  opacity: 0.42;
+}
+.ecg__pulso path {
+  stroke-width: 2.6;
+}
+.ecg__janela {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 30%;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 82%, #000 97%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 82%, #000 97%, transparent);
+  transform: translateX(-100%);
+}
+.ecg__dentro {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 333.333%;
+}
+.js .ecg__base path {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   animation: ecg-traca 3.6s var(--ease) 0.6s forwards;
 }
+.js .ecg__janela {
+  animation: ecg-janela var(--ecg-ritmo) linear 3.4s infinite;
+}
+.js .ecg__dentro {
+  animation: ecg-dentro var(--ecg-ritmo) linear 3.4s infinite;
+}
+/* Sem JS a janela não anda; fica fora da caixa. */
+html:not(.js) .ecg__janela {
+  display: none;
+}
 @keyframes ecg-traca {
   to {
     stroke-dashoffset: 0;
+  }
+}
+@keyframes ecg-janela {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(333.333%);
+  }
+}
+@keyframes ecg-dentro {
+  from {
+    transform: translateX(30%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/**
+ * Formas de fundo (anéis, disco, arcos e a cruz pontilhada). Cores pelas
+ * variáveis `--formas-*`, para a mesma peça servir no branco e no azul.
+ */
+.formas {
+  --formas-linha: rgba(16, 119, 174, 0.2);
+  --formas-arco: var(--azul);
+  --formas-disco: rgba(16, 119, 174, 0.07);
+  pointer-events: none;
+}
+.formas svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.formas__anel {
+  fill: none;
+  stroke: var(--formas-linha);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.formas__fio {
+  stroke: var(--formas-linha);
+  stroke-width: 1;
+  stroke-dasharray: 2 8;
+  vector-effect: non-scaling-stroke;
+}
+.formas__disco {
+  fill: var(--formas-disco);
+}
+.formas__arco {
+  fill: none;
+  stroke: var(--formas-arco);
+  stroke-width: 2;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.55;
+}
+.formas__ponto {
+  fill: var(--formas-arco);
+}
+.formas__giro,
+.formas__orbita {
+  transform-origin: 200px 200px;
+  transform-box: view-box;
+}
+.js .formas__giro {
+  animation: formas-gira 48s linear infinite;
+}
+.js .formas__orbita {
+  animation: formas-gira 26s linear infinite reverse;
+}
+@keyframes formas-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* Sobre o azul: linhas brancas translúcidas, nunca competindo com o texto. */
+.formas--azul {
+  --formas-linha: rgba(255, 255, 255, 0.2);
+  --formas-arco: rgba(255, 255, 255, 0.7);
+  --formas-disco: rgba(255, 255, 255, 0.06);
+}
+/* No celular as formas ficam atrás do título: sem o ponto que gira (passando
+   pelas letras ele parece um acento perdido) e com os arcos mais discretos. */
+@media (max-width: 860px) {
+  .formas__orbita {
+    display: none;
+  }
+  .formas__arco {
+    opacity: 0.38;
   }
 }
 
@@ -1701,6 +2282,11 @@ button {
   display: flex;
   width: max-content;
   animation: fita-corre 60s linear infinite;
+}
+/* Com JS quem anda é o componente, que acelera com a rolagem. */
+.fita--viva .fita__trilho {
+  animation: none;
+  will-change: transform;
 }
 .fita ul {
   display: flex;
@@ -1728,14 +2314,17 @@ button {
   }
 }
 
-/* Celular com a conversa que se escreve sozinha. */
+/* Celular com a conversa que se escreve sozinha e conduz os passos. */
 .conversa {
   margin: 0;
   justify-self: center;
   width: min(100%, 22rem);
+  margin-inline: auto;
 }
 .celular {
   position: relative;
+  display: flex;
+  flex-direction: column;
   border-radius: 2.2rem;
   padding: 0.6rem;
   background: var(--tinta);
@@ -1776,21 +2365,30 @@ button {
 .celular__status {
   font-size: 0.8rem;
 }
+/* Altura fixa e mensagens ancoradas embaixo, junto da barra, como no
+   WhatsApp: cada mensagem nova empurra as anteriores para cima, e a primeira
+   sai pelo topo quando a conversa enche. */
 .celular__msgs {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  min-height: 21rem;
-  padding: 1rem 0.8rem 3.4rem;
-  border-radius: 0 0 1.7rem 1.7rem;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  height: 22rem;
+  overflow: hidden;
+  padding: 0.9rem 0.75rem 0.75rem;
   background: var(--nevoa);
 }
+@media (min-width: 641px) {
+  .celular__msgs {
+    height: 24.5rem;
+  }
+}
 .msg {
-  max-width: 84%;
-  padding: 0.6rem 0.85rem;
+  max-width: 86%;
+  padding: 0.55rem 0.75rem 0.45rem;
   border-radius: 1rem;
-  font-size: 0.94rem;
-  line-height: 1.4;
+  font-size: 0.9rem;
+  line-height: 1.38;
   color: var(--tinta);
   box-shadow: 0 1px 1px rgba(35, 39, 43, 0.1);
 }
@@ -1804,29 +2402,92 @@ button {
   background: var(--branco);
   border-bottom-left-radius: 0.3rem;
 }
-.js .celular__msgs .msg {
-  opacity: 0;
-  transform: translateY(8px) scale(0.97);
-  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+/* Hora e tiques, no canto da bolha, como no WhatsApp. */
+.msg__hora {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0.4rem 0 -0.15rem 0.55rem;
+  font-size: 0.68rem;
+  line-height: 1;
+  color: var(--apoio);
 }
-.js .celular__msgs .msg.on {
-  opacity: 1;
-  transform: none;
+.msg__tiques {
+  width: 1rem;
+  height: 0.62rem;
+  fill: none;
+  stroke: var(--cinza);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s var(--ease);
 }
+.msg.is-lida .msg__tiques {
+  stroke: var(--azul);
+}
+/* Etiqueta do passo no meio da conversa, como as de data do WhatsApp. */
+.etiqueta {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-block: 0.2rem;
+  padding: 0.28rem 0.75rem 0.28rem 0.3rem;
+  border-radius: var(--raio-pill);
+  background: var(--branco);
+  box-shadow: 0 1px 1px rgba(35, 39, 43, 0.1);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--tinta);
+}
+.etiqueta__n {
+  display: grid;
+  place-items: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--branco);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+/* Com JS, cada peça só ocupa espaço quando entra (`.on`). A primeira
+   etiqueta já nasce visível: o celular nunca entra vazio. */
+.js .celular__msgs > li:not(.on):not(.etiqueta:first-child) {
+  display: none;
+}
+.js .celular__msgs > li.on {
+  animation: msg-entra 0.38s var(--ease) both;
+}
+.msg--paciente {
+  transform-origin: right bottom;
+}
+.msg--clinica,
 .celular__digitando {
-  position: absolute;
-  left: 1.4rem;
-  bottom: 1.4rem;
+  transform-origin: left bottom;
+}
+@keyframes msg-entra {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+}
+/* "Digitando" é uma bolha da conversa, no lugar da resposta que vem. Sem JS
+   ela não aparece. */
+.celular__digitando {
+  align-self: flex-start;
   display: flex;
   gap: 0.25rem;
-  padding: 0.6rem 0.75rem;
+  padding: 0.7rem 0.8rem;
   border-radius: 1rem;
+  border-bottom-left-radius: 0.3rem;
   background: var(--branco);
-  opacity: 0;
-  transition: opacity 0.25s;
+  box-shadow: 0 1px 1px rgba(35, 39, 43, 0.1);
 }
-.celular__digitando.on {
-  opacity: 1;
+html:not(.js) .celular__digitando {
+  display: none;
 }
 .celular__digitando span {
   width: 0.4rem;
@@ -1847,6 +2508,75 @@ button {
     opacity: 0.5;
   }
 }
+/* Barra de digitação: a mensagem do paciente é escrita aqui antes de ir. */
+.celular__entrada {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.55rem 0.65rem;
+  border-radius: 0 0 1.7rem 1.7rem;
+  background: var(--nevoa);
+  border-top: 1px solid var(--linha);
+}
+.celular__campo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 2.5rem;
+  padding-inline: 0.95rem;
+  border-radius: var(--raio-pill);
+  background: var(--branco);
+  font-size: 0.9rem;
+  color: var(--tinta);
+  white-space: nowrap;
+  overflow: hidden;
+}
+.celular__texto {
+  flex: none;
+}
+.celular__dica {
+  color: var(--apoio);
+}
+.celular__cursor {
+  display: none;
+  flex: none;
+  width: 1.5px;
+  height: 1.1em;
+  margin-left: 1px;
+  background: var(--azul);
+  animation: cursor-pisca 1s steps(1) infinite;
+}
+.celular__entrada.is-escrevendo .celular__cursor {
+  display: block;
+}
+.celular__entrada.is-escrevendo .celular__dica {
+  display: none;
+}
+@keyframes cursor-pisca {
+  50% {
+    opacity: 0;
+  }
+}
+.celular__enviar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--azul);
+  color: var(--branco);
+  transition: transform 0.2s var(--ease);
+}
+.celular__enviar svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-left: 2px;
+}
+.celular__entrada.is-enviando .celular__enviar {
+  transform: scale(0.86);
+}
 .conversa__legenda {
   margin-top: 0.9rem;
   font-size: 0.875rem;
@@ -1863,14 +2593,34 @@ button {
   .js [data-reveal],
   .js .hero__entra,
   .js .hero__h1 .w,
-  .js [data-acende] .p,
-  .js .celular__msgs .msg {
+  .js [data-acende] .p {
     opacity: 1;
     transform: none;
   }
-  .js .ecg path {
+  .formas__giro,
+  .formas__orbita,
+  .celular__cursor,
+  .mapa__onda {
+    animation: none !important;
+  }
+  .js .mapa .via {
+    stroke-dashoffset: 0;
+  }
+  .js .mapa__areas,
+  .js .mapa__rotulos,
+  .js .mapa__ponto {
+    opacity: 1;
+    transform: none;
+  }
+  .js .ecg__base path {
     stroke-dasharray: none;
     stroke-dashoffset: 0;
+  }
+  .ecg__janela {
+    display: none;
+  }
+  .formas {
+    translate: none !important;
   }
   .js .passo:not(:last-child)::after {
     transform: none;

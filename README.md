@@ -144,17 +144,19 @@ npm run build:proposta   # já define o subdiretório do repositório
 
 e envie o conteúdo de `out/` (com um arquivo `.nojekyll` vazio) para a branch `gh-pages`.
 
-**Versões em paralelo para comparação.** Enquanto a identidade Linha Azul é
-validada, a `gh-pages` serve as duas versões ao mesmo tempo:
+**Versões em paralelo para comparação.** A `gh-pages` serve as três versões ao
+mesmo tempo, cada uma na sua pasta:
 
-| Versão | Endereço | Código |
-|---|---|---|
-| Anterior (vinho) | `https://joao-conexxio.github.io/conexxio-proposta-clinica-saude-campinas/` | branch `main` |
-| Linha Azul | `https://joao-conexxio.github.io/conexxio-proposta-clinica-saude-campinas/linha-azul/` | branch `identidade-linha-azul` |
+| Versão | Endereço | Código | Build |
+|---|---|---|---|
+| Anterior (vinho) | `https://joao-conexxio.github.io/conexxio-proposta-clinica-saude-campinas/` | branch `main` | `npm run build:proposta` |
+| Linha Azul (validada pela clínica) | `…/linha-azul/` | branch `identidade-linha-azul` | `npm run build:proposta:linha-azul` |
+| Linha Azul viva (animações e mapa) | `…/linha-azul-viva/` | branch `linha-azul-viva` | `npm run build:proposta:viva` |
 
-Para atualizar a Linha Azul, rode `npm run build:proposta:linha-azul` e substitua
-só a pasta `linha-azul/` da `gh-pages` pelo conteúdo de `out/`. A raiz, com a
-versão anterior, não é tocada.
+Para atualizar uma delas, rode o build correspondente e substitua **só a pasta
+daquela versão** na `gh-pages` pelo conteúdo de `out/`. As outras não são
+tocadas. Faça isso num clone separado da `gh-pages`: o build apaga a pasta
+`out/` inteira, então ela nunca deve ser um repositório.
 
 ## Colocar no ar como site oficial
 
@@ -273,31 +275,64 @@ Outras escolhas:
 ## Movimento
 
 As animações vêm do proposta-kit da Conexxio, portadas para componentes React
-em `components/movimento/`. A marcação declara e um componente só executa.
+em `components/movimento/`, e foram ampliadas na versão "viva" pensando
+primeiro no celular. A marcação declara e um componente só executa.
+
+O guia pede visual "limpo, claro, profissional" e manda evitar excesso de
+elementos e efeitos. Por isso o movimento segue um tema só, **a Linha Azul que
+bate**: traços finos no azul oficial (o eletro, as formas, as ruas do mapa) e
+nada aplicado ao logotipo.
 
 | Peça | Onde | O que faz |
 |---|---|---|
 | Fundo vivo (`FundoVivo`) | hero, faixa de números, cartão final | Manchas da cor da marca fluindo em WebGL, seguindo o mouse ou o dedo. No hero são azuis bem diluídas sobre branco; nas faixas azuis, as manchas só **escurecem** o azul oficial, para o texto branco nunca perder contraste |
 | Título palavra por palavra (`Palavras`) | H1 do hero | Sobe palavra por palavra no carregamento; o resto do hero entra em cascata |
-| Traçado de eletro (`Ecg`) | base do hero | Se desenha da esquerda para a direita, uma vez. É o motivo do kit para clínica geral e popular, e a clínica faz eletro, Holter e MAPA |
-| Fita (`sections/Fita`) | logo abaixo do hero | Faixa azul inclinada com tudo o que a clínica atende, correndo em loop. A lista sai do quadro de especialidades |
+| Monitor de eletro (`Ecg`) | hero | A linha se desenha uma vez e depois um trecho mais forte corre por ela sem parar, como num monitor cardíaco. No celular fica logo depois dos botões, para estar na primeira tela; no desktop atravessa a base do hero |
+| Formas de fundo (`Formas`) | hero e faixa "A clínica" | Anéis, disco, dois arcos e a cruz pontilhada (arte `formas` do kit). Os arcos giram devagar e as formas andam mais devagar que a rolagem (`data-paralaxe`); no desktop seguem um pouco o mouse. No celular ficam no canto do título, sem o ponto que orbita |
+| Fita (`sections/Fita`) | logo abaixo do hero | Faixa azul inclinada com tudo o que a clínica atende. Anda sozinha, acelera quando a pessoa rola e troca de sentido quando ela sobe a página |
 | Texto que acende (`Acende` + `data-acende`) | "sem plano" e estrutura | O parágrafo acende palavra por palavra conforme a rolagem |
 | Revelação (`data-reveal`) | títulos, itens, passos | Entra subindo ao chegar na tela, em cascata (`--d` em ms) |
-| Linha do tempo | passos | O fio entre os passos se desenha e o número fica azul quando o passo entra |
-| Conversa (`Conversa`) | ao lado dos passos | Celular com uma conversa de WhatsApp que se escreve sozinha. Mensagens em `comoFunciona.conversa` (`content/lp.ts`), só com fatos publicados e com legenda de conversa ilustrativa |
+| Quadro de especialidades (`sections/Quadro`) | lista | Ícone em cada atendimento; o destaque azul desliza entre os filtros; ao filtrar, os itens deslizam até o lugar novo. No celular os filtros ficam presos no topo enquanto a lista passa. A busca vale sempre para a lista inteira |
+| Conversa que conduz os passos (`Conversa`) | "Como agendar" | Celular com uma conversa de WhatsApp: a mensagem é digitada na barra e enviada, a clínica aparece digitando e responde, os tiques ficam azuis. Cada passo acende junto (etiqueta dentro da conversa e, no desktop, a linha do tempo ao lado). Mensagens em `comoFunciona.conversa` (`content/lp.ts`), só com fatos publicados e com legenda de conversa ilustrativa |
+| Mapa desenhado (`Mapa`) | "Onde fica" | As ruas reais do Centro em linhas finas, a R. Bernardino de Campos em azul e o pin no 927, que cai no lugar e pulsa. As ruas se desenham de dentro para fora quando a seção chega (`data-desenha`). O cartão inteiro abre o Google Maps |
 | Inclinação e brilho (`data-tilt`, `data-glow`) | cartão do hero, itens do quadro | Seguem o cursor. Só no desktop: no toque, o efeito vem da rolagem e do fundo vivo |
 
 Regras que valem para todas:
-- **Só `transform` e `opacity`** (e o canvas do fundo vivo): nada recalcula
-  layout, e a rolagem continua leve no celular.
-- **O fundo vivo pausa fora da tela** e roda em resolução reduzida. Sem WebGL,
-  vira um gradiente parado nas mesmas cores.
+- **Só `transform` e `opacity`** (e o canvas do fundo vivo e o desenho único
+  do mapa): nada recalcula layout. Medido com o processador do celular
+  simulado 4x mais lento: 60 quadros por segundo na rolagem, nenhum travado.
+- **O que é contínuo para fora da tela:** fundo vivo, conversa e fita só rodam
+  enquanto estão visíveis.
 - **Movimento reduzido:** quem ativa a opção no sistema vê tudo pronto e parado
-  (fita parada, texto aceso, conversa inteira).
+  (eletro desenhado, fita parada, texto aceso, conversa inteira, mapa pronto).
 - **Sem JavaScript, nada fica escondido:** todo estado inicial invisível está
   atrás da classe `.js`, que só existe com JavaScript ligado.
 
 Para desligar uma peça, basta tirar o componente ou o atributo da marcação.
+
+### Ícones
+
+Os ícones de traço (`components/ui/icones-saude-dados.ts`) seguem a grade do
+kit: 24×24, traço de 1,6, sem cor própria. Os de clínica geral, coração, olho e
+outros vieram do `lib/icones-saude.mjs` do proposta-kit; os de odontologia,
+exames e alguns órgãos foram desenhados aqui no mesmo traço. Cada item do
+quadro escolhe o seu em `content/lp.ts` (campo `icone`).
+
+### Mapa
+
+O desenho fica em `content/mapa.ts`, **gerado** a partir do OpenStreetMap por
+`ferramentas/gerar-mapa.mjs` (não editar à mão). O site não consulta nenhum
+serviço de mapa ao abrir: é SVG dentro do HTML, sem cookie e sem requisição.
+
+```bash
+npm run mapa                                   # baixa as ruas de novo e regera
+node ferramentas/gerar-mapa.mjs dados.json     # usa um arquivo já baixado
+```
+
+O centro é o pin da ficha da clínica no Google Maps (conferido em 06/11/2026).
+Para outra unidade, troque `PIN` e os rótulos no topo do script. A licença dos
+dados (ODbL) exige o crédito "© colaboradores do OpenStreetMap", que aparece
+embaixo do mapa.
 
 ## Métricas e conversão
 
@@ -333,13 +368,16 @@ app/
   sitemap.ts        sitemap.xml
 components/
   chrome/           Header e Footer
-  movimento/        fundo vivo, eletro, conversa, palavras e o orquestrador
+  movimento/        fundo vivo, eletro, formas, conversa, mapa, palavras e o orquestrador
   sections/         uma seção da página por arquivo
-  ui/               botão de CTA, contador, ícones, barra mobile
+  ui/               botão de CTA, contador, ícones (inclusive os de saúde), barra mobile
 content/
   lp.ts             TODO o conteúdo da página
   schema.ts         dados estruturados (JSON-LD) gerados a partir de lp.ts
+  mapa.ts           desenho do Centro (GERADO por ferramentas/gerar-mapa.mjs)
   brief.md          levantamento do site atual da clínica (fonte do conteúdo)
+ferramentas/
+  gerar-mapa.mjs    baixa as ruas do OpenStreetMap e gera content/mapa.ts
 hooks/              contagem dos números e barra de progresso do header
 lib/
   asset.ts          prefixa o subdiretório em imagens de public/
@@ -352,7 +390,12 @@ public/brand/       logotipo
 - **Horário de funcionamento:** não está publicado em lugar nenhum. Assim que a
   clínica confirmar, vale incluir na ficha do hero e no FAQ.
 - **Telefone com DDD 11:** o WhatsApp `(11) 99300-7610` é o que está publicado no
-  site atual, mas a clínica fica em Campinas (DDD 19). Confirmar com a clínica.
+  site atual, mas a clínica fica em Campinas (DDD 19). A ficha da clínica no
+  Google Maps mostra um fixo, `(19) 2121-6601` (visto em 06/11/2026). Confirmar
+  com a clínica qual número vai no site e se o fixo entra também.
+- **Fotos:** a clínica vai fotografar fachada, consultórios e sala de espera.
+  O lugar natural é o vazio da faixa "A clínica" no desktop (hoje ocupado pelas
+  formas de fundo) e uma galeria; o proposta-kit tem a seção `galeria` pronta.
 
 ---
 

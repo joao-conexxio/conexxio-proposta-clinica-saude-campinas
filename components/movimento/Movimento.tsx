@@ -9,6 +9,10 @@ import { useEffect } from 'react'
  * A marcação declara, este componente executa:
  *
  *   data-reveal    entra subindo quando chega na tela (`--d` atrasa, em ms)
+ *   data-desenha   ganha `.is-in` ao chegar na tela, sem mexer em opacidade
+ *                  nem posição (o CSS decide o que desenhar: o mapa usa)
+ *   data-paralaxe  anda mais devagar que a rolagem (o valor é a fração) e,
+ *                  onde há mouse, segue um pouco o cursor
  *   data-acende    texto acende palavra por palavra conforme a rolagem
  *                  (os spans `.p` vêm prontos do componente `Acende`)
  *   data-tilt      inclina seguindo o cursor (só onde há mouse)
@@ -24,7 +28,7 @@ export function Movimento() {
     const parado = matchMedia('(prefers-reduced-motion: reduce)').matches
     const limpezas: Array<() => void> = []
 
-    const revelaveis = [...doc.querySelectorAll<HTMLElement>('[data-reveal]')]
+    const revelaveis = [...doc.querySelectorAll<HTMLElement>('[data-reveal], [data-desenha]')]
     const acendiveis = [...doc.querySelectorAll<HTMLElement>('[data-acende]')].map((el) => ({
       el,
       palavras: [...el.querySelectorAll<HTMLElement>('.p')],
@@ -80,9 +84,59 @@ export function Movimento() {
       })
     }
 
+    /* Paralaxe das formas de fundo. A posição sai da caixa do PAI (a da
+       própria forma muda com o deslocamento e realimentaria a conta). Escreve
+       na propriedade `translate`, que soma com qualquer `transform` do CSS em
+       vez de substituí-lo. */
+    const comMouse = matchMedia('(hover: hover) and (pointer: fine)').matches
+    const paralaxes = [...doc.querySelectorAll<HTMLElement>('[data-paralaxe]')].map((el) => ({
+      el,
+      fator: Number(el.dataset.paralaxe) || 0,
+    }))
+    if (paralaxes.length) {
+      let mx = 0
+      let my = 0
+      let alvoX = 0
+      let alvoY = 0
+      let pedido = 0
+      const pintar = () => {
+        pedido = 0
+        mx += (alvoX - mx) * 0.08
+        my += (alvoY - my) * 0.08
+        const h = innerHeight
+        for (const { el, fator } of paralaxes) {
+          const pai = el.parentElement
+          if (!pai) continue
+          const r = pai.getBoundingClientRect()
+          if (r.bottom < -200 || r.top > h + 200) continue
+          const dy = (h / 2 - (r.top + r.height / 2)) * fator
+          el.style.translate = `${(mx * 24).toFixed(1)}px ${(dy + my * 24).toFixed(1)}px`
+        }
+        if (Math.abs(alvoX - mx) > 0.002 || Math.abs(alvoY - my) > 0.002) agendarParalaxe()
+      }
+      const agendarParalaxe = () => {
+        if (!pedido) pedido = requestAnimationFrame(pintar)
+      }
+      const aoMover = (ev: PointerEvent) => {
+        alvoX = 0.5 - ev.clientX / innerWidth
+        alvoY = 0.5 - ev.clientY / innerHeight
+        agendarParalaxe()
+      }
+      addEventListener('scroll', agendarParalaxe, { passive: true })
+      addEventListener('resize', agendarParalaxe, { passive: true })
+      if (comMouse) addEventListener('pointermove', aoMover, { passive: true })
+      pintar()
+      limpezas.push(() => {
+        cancelAnimationFrame(pedido)
+        removeEventListener('scroll', agendarParalaxe)
+        removeEventListener('resize', agendarParalaxe)
+        removeEventListener('pointermove', aoMover)
+      })
+    }
+
     /* Inclinação e brilho seguem o ponteiro — só onde há ponteiro de verdade.
        No toque, o efeito vem da rolagem e do fundo vivo, não daqui. */
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    if (comMouse) {
       doc.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
         const mover = (ev: PointerEvent) => {
           const r = el.getBoundingClientRect()
