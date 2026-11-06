@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[177],{1290:()=>{},3086:(e,a,s)=>{Promise.resolve().then(s.t.bind(s,4246,23)),Promise.resolve().then(s.t.bind(s,1290,23))},4246:e=>{e.exports={style:{fontFamily:"'fonte', 'fonte Fallback'"},className:"__className_743a57",variable:"__variable_743a57"}}},e=>{e.O(0,[443,441,255,358],()=>e(e.s=3086)),_N_E=e.O()}]);
