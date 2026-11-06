@@ -393,7 +393,7 @@ export const mapa = {
    "id": "rua-0",
    "d": "M-390 180L-333 156L-319 149L-278 132L-221 105L-136 67L-60 31L-56 29L16 -1L54 -20L76 -31L83 -34L93 -39L162 -70",
    "texto": "R. Bernardino de Campos",
-   "onde": "34%"
+   "onde": "42%"
   },
   {
    "id": "rua-1",

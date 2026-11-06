@@ -29,7 +29,7 @@ const FOLGA = 30
 const DESTAQUE = 'Rua Bernardino de Campos'
 const ROTULOS = [
   // `onde`: posição do texto ao longo da rua (o pin fica no meio da Bernardino).
-  { rua: 'Rua Bernardino de Campos', texto: 'R. Bernardino de Campos', onde: '34%' },
+  { rua: 'Rua Bernardino de Campos', texto: 'R. Bernardino de Campos', onde: '42%' },
   { rua: 'Rua Regente Feijó', texto: 'R. Regente Feijó' },
   { rua: 'Avenida Francisco Glicério', texto: 'Av. Francisco Glicério' },
 ]
